@@ -1,4 +1,4 @@
-package pl.filmoteka.actor;
+package pl.filmoteka.repository.actor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
