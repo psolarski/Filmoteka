@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.Configuration.MyBean;
 import pl.filmoteka.model.Actor;
 import pl.filmoteka.repository.ActorRepository;
-
 import java.util.List;
 
 /**
@@ -36,7 +35,7 @@ public class ActorsController {
 
     @RequestMapping(value = "testnum", method = RequestMethod.GET)
     public void testActor(@RequestParam(value = "someint", required = false) Integer num) {
-
-        System.out.println(num);
+            System.out.println("num");
     }
+
 }
