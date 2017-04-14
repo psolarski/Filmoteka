@@ -1,4 +1,4 @@
-package pl.filmoteka.Configuration;
+package pl.filmoteka.configuration;
 
 /**
  * Created by Piotr on 29.03.2017.
