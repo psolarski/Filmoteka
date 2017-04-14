@@ -35,8 +35,8 @@ public class ActorsController {
         return savedActor;
     }
 
-    @RequestMapping(value = "delete", method = RequestMethod.POST)
-    public void testActor(@RequestParam(value = "id") Long id) {
+    @RequestMapping(value = "delete", method = RequestMethod.DELETE)
+    public void deleteActor(@RequestParam(value = "id") Long id) {
             actorService.deleteActor(id);
     }
 
