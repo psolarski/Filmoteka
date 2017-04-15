@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.configuration.MyBean;
 import pl.filmoteka.model.Actor;
+import pl.filmoteka.model.Movie;
 import pl.filmoteka.repository.ActorRepository;
 import pl.filmoteka.service.ActorService;
 
@@ -38,6 +39,11 @@ public class ActorsController {
     @RequestMapping(value = "delete", method = RequestMethod.DELETE)
     public void deleteActor(@RequestParam(value = "id") Long id) {
             actorService.deleteActor(id);
+    }
+
+    @RequestMapping(value = "movie", method = RequestMethod.POST)
+    public void addNewMovie(@RequestParam(value = "id") Long id, @RequestBody Movie movie) {
+        actorService.addFilm(id, movie);
     }
 
 }
