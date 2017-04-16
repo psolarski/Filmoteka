@@ -1,7 +1,9 @@
 package pl.filmoteka.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
+import pl.filmoteka.aspect.Monitored;
 import pl.filmoteka.configuration.MyBean;
 import pl.filmoteka.model.Actor;
 import pl.filmoteka.model.Movie;
@@ -23,10 +25,10 @@ public class ActorsController {
     @Autowired
     private MyBean myBean;
 
+    @Monitored
+    @Cacheable("actors")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<Actor> findAll() {
-
-        System.out.println();
         return actorService.findAllActors();
     }
 

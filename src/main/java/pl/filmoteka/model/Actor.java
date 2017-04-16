@@ -24,9 +24,9 @@ public class Actor {
     private String nationality;
 
     /* Na razie porzucam encje, ponieważ coś mi tu nie gra */
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Movie.class)
-    @JoinColumn(name = "xxx")
-    private Collection<Movie> movies = new ArrayList<>();
+//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Movie.class)
+//    @JoinColumn(name = "xxx")
+//    private Collection<Movie> movies = new ArrayList<>();
 
     public Actor() {}
 
@@ -68,13 +68,13 @@ public class Actor {
         this.nationality = nationality;
     }
 
-    public Collection<Movie> getMovies() {
-        return movies;
-    }
-
-    public void setMovies(Collection<Movie> movies) {
-        this.movies = movies;
-    }
+//    public Collection<Movie> getMovies() {
+//        return movies;
+//    }
+//
+//    public void setMovies(Collection<Movie> movies) {
+//        this.movies = movies;
+//    }
 
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
@@ -82,5 +82,10 @@ public class Actor {
 
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + surname + " " + nationality;
     }
 }

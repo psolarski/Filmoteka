@@ -27,8 +27,8 @@ public class Movie {
     @Column
     private String genre;
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = Actor.class, mappedBy = "movies")
-    private Collection<Actor> actors = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.LAZY, targetEntity = Actor.class, mappedBy = "movies")
+//    private Collection<Actor> actors = new ArrayList<>();
 
     public Movie() {
     }
@@ -63,13 +63,13 @@ public class Movie {
         this.genre = genre;
     }
 
-    public Collection<Actor> getActors() {
-        return actors;
-    }
-
-    public void setActors(Collection<Actor> actors) {
-        this.actors = actors;
-    }
+//    public Collection<Actor> getActors() {
+//        return actors;
+//    }
+//
+//    public void setActors(Collection<Actor> actors) {
+//        this.actors = actors;
+//    }
 
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
