@@ -4,13 +4,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.time.LocalDateTime;
 
 /**
- * Created by Piotr on 15.04.2017.
+ * Entity that represents a movie.
  */
-
 @Entity
 public class Movie {
 
@@ -27,16 +25,24 @@ public class Movie {
     @Column
     private String genre;
 
+    @Column
+    private LocalDateTime releaseDate;
+
+    @Column
+    private String language;
+
 //    @OneToMany(fetch = FetchType.LAZY, targetEntity = Actor.class, mappedBy = "movies")
 //    private Collection<Actor> actors = new ArrayList<>();
 
     public Movie() {
     }
 
-    public Movie(String name, int duration, String genre) {
+    public Movie(String name, int duration, String genre, LocalDateTime releaseDate, String language) {
         this.name = name;
         this.duration = duration;
         this.genre = genre;
+        this.releaseDate = releaseDate;
+        this.language = language;
     }
 
     public String getName() {
@@ -63,7 +69,22 @@ public class Movie {
         this.genre = genre;
     }
 
-//    public Collection<Actor> getActors() {
+    public LocalDateTime getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(LocalDateTime releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+    //    public Collection<Actor> getActors() {
 //        return actors;
 //    }
 //
