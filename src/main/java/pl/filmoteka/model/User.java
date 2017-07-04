@@ -3,6 +3,8 @@ package pl.filmoteka.model;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity that represents an user.
@@ -14,6 +16,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id", unique = true, nullable = false)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -25,6 +28,15 @@ public class User {
     @Column(nullable = false)
     @Email
     private String email;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    private Set<Notification> notifications = new HashSet<>(0);
+
+    public User(String login, String password, String email) {
+        this.login = login;
+        this.password = password;
+        this.email = email;
+    }
 
     public String getLogin() {
         return login;
