@@ -6,7 +6,7 @@ import pl.filmoteka.model.Movie;
 import java.util.List;
 
 /**
- * Created by Piotr on 15.04.2017.
+ * Repository for Movie entity.
  */
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
