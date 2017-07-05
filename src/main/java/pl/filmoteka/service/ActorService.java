@@ -38,8 +38,28 @@ public class ActorService {
         Actor actor = actorRepository.getOne(id);
 //        actor.getMovies().add(movie);
 //        for (Movie m: actor.getMovies()) {
-//            System.out.println("ELO ELO");
 //        }
         actorRepository.saveAndFlush(actor);
     }
+
+    @Transactional
+    public List<Actor> findActorByName(String name) {
+        return actorRepository.findByName(name);
+    }
+
+    @Transactional
+    public List<Actor> findActorBySurname(String surname) {
+        return actorRepository.findBySurname(surname);
+    }
+
+    @Transactional
+    public List<Actor> findActorByNameOrSurname(String name, String surname) {
+        return actorRepository.findByNameOrSurname(name, surname);
+    }
+
+    @Transactional
+    public Actor findById(Long id) {
+        return actorRepository.findOne(id);
+    }
+
 }
