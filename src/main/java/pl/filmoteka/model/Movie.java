@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity that represents a movie.
@@ -31,8 +33,13 @@ public class Movie {
     @Column
     private String language;
 
-//    @OneToMany(fetch = FetchType.LAZY, targetEntity = Actor.class, mappedBy = "movies")
-//    private Collection<Actor> actors = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Actor.class, cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "movie_actor",
+            joinColumns = {@JoinColumn(name = "movie_id", nullable = false, updatable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "actor_id", nullable = false, updatable = false)}
+    )
+    private Set<Actor> actors = new HashSet<>();
 
     public Movie() {
     }
@@ -83,6 +90,14 @@ public class Movie {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public Set<Actor> getActors() {
+        return actors;
+    }
+
+    public void setActors(Set<Actor> actors) {
+        this.actors = actors;
     }
     //    public Collection<Actor> getActors() {
 //        return actors;

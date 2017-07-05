@@ -4,8 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Actor {
@@ -23,10 +23,8 @@ public class Actor {
     @Column
     private String nationality;
 
-    /* Na razie porzucam encje, ponieważ coś mi tu nie gra */
-//    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Movie.class)
-//    @JoinColumn(name = "xxx")
-//    private Collection<Movie> movies = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Movie.class, mappedBy = "actors")
+    private Set<Movie> movies = new HashSet<>();
 
     public Actor() {}
 
@@ -68,13 +66,13 @@ public class Actor {
         this.nationality = nationality;
     }
 
-//    public Collection<Movie> getMovies() {
-//        return movies;
-//    }
-//
-//    public void setMovies(Collection<Movie> movies) {
-//        this.movies = movies;
-//    }
+    public Set<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(Set<Movie> movies) {
+        this.movies = movies;
+    }
 
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
