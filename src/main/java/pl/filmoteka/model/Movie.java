@@ -41,6 +41,9 @@ public class Movie {
     )
     private Set<Actor> actors = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class, mappedBy = "movies")
+    private Set<User> users = new HashSet<>();
+
     public Movie() {
     }
 
