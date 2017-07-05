@@ -1,5 +1,8 @@
 package pl.filmoteka.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -25,6 +28,9 @@ public class Notification {
 
     @Column
     private boolean isRead;
+
+    public Notification() {
+    }
 
     public Notification(User user, String content, LocalDateTime createDate, boolean isRead) {
         this.user = user;
@@ -63,5 +69,13 @@ public class Notification {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
     }
 }

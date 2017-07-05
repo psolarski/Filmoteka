@@ -1,5 +1,7 @@
 package pl.filmoteka.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
@@ -32,6 +34,9 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Notification> notifications = new HashSet<>(0);
 
+    public User() {
+    }
+
     public User(String login, String password, String email) {
         this.login = login;
         this.password = password;
@@ -60,5 +65,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
     }
 }

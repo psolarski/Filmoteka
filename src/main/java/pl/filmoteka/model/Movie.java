@@ -99,13 +99,6 @@ public class Movie {
     public void setActors(Set<Actor> actors) {
         this.actors = actors;
     }
-    //    public Collection<Actor> getActors() {
-//        return actors;
-//    }
-//
-//    public void setActors(Collection<Actor> actors) {
-//        this.actors = actors;
-//    }
 
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
