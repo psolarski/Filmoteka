@@ -4,12 +4,15 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Director {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "director_id", nullable = false, updatable = false)
     private Long id;
 
     @Column
@@ -20,6 +23,9 @@ public class Director {
 
     @Column
     private String nationality;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "director")
+    private Set<Movie> movies = new HashSet<>(0);
 
     public Director() {}
 
@@ -59,6 +65,14 @@ public class Director {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public Set<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(Set<Movie> movies) {
+        this.movies = movies;
     }
 
     public int hashCode() {

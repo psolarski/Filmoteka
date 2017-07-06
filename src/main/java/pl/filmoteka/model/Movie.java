@@ -16,6 +16,7 @@ public class Movie {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "movie_id", nullable = false, updatable = false)
     private Long id;
 
     @Column
@@ -43,6 +44,10 @@ public class Movie {
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class, mappedBy = "movies")
     private Set<User> users = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "director_id", nullable = false)
+    private Director director;
 
     public Movie() {
     }
@@ -101,6 +106,22 @@ public class Movie {
 
     public void setActors(Set<Actor> actors) {
         this.actors = actors;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public Director getDirector() {
+        return director;
+    }
+
+    public void setDirector(Director director) {
+        this.director = director;
     }
 
     public int hashCode() {
