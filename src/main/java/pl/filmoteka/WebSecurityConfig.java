@@ -25,7 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.PUT, "api/v1/actors/update").hasAnyRole("admin", "user")
                 .anyRequest().authenticated()
                 .and().httpBasic()
-                .and().csrf().disable();
+                .and().csrf().disable()
+                .headers().frameOptions().disable();
     }
 
     @Autowired

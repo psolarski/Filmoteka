@@ -34,11 +34,21 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private Set<Notification> notifications = new HashSet<>(0);
 
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class, cascade = CascadeType.PERSIST)
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id",
+                                  nullable = false, updatable = false),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id",
+                                         nullable = false, updatable = false)
+    )
+    private Set<Role> roles = new HashSet<>();
+
     // List of movies that the user has watched
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = Movie.class, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "watched_movies",
-            joinColumns = {@JoinColumn(name = "user_id", nullable = false, updatable = false)},
+            joinColumns ={@JoinColumn(name = "user_id", nullable = false, updatable = false)},
             inverseJoinColumns = {@JoinColumn(name = "movie_id", nullable = false, updatable = false)}
     )
     private Set<Movie> movies = new HashSet<>();
@@ -74,6 +84,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public int hashCode() {
