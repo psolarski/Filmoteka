@@ -36,7 +36,8 @@ public class ActorControllerFullIntegrationTest {
     @Test
     public void ensureThatAllActorsAreReturnedFromEndpoint() {
 
-        ResponseEntity<String> allActorsResponse = testRestTemplate.getForEntity("/api/v1/actors/", String.class);
+        ResponseEntity<String> allActorsResponse = testRestTemplate.withBasicAuth("user", "password").getForEntity("/api/v1/actors/", String.class);
+
         assertThat(allActorsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         JsonPath jsonPath = new JsonPath(allActorsResponse.getBody());
