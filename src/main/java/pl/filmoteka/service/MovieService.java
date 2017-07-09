@@ -23,6 +23,12 @@ public class MovieService {
     }
 
     @Transactional
+    public List<Movie> findByName(String name) { return movieRepository.findByName(name); }
+
+    @Transactional
+    public List<Movie> findByGenre(String genre) { return movieRepository.findByGenre(genre); }
+
+    @Transactional
     public Movie addNewMovie(Movie movie) {
         return movieRepository.saveAndFlush(movie);
     }

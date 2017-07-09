@@ -1,10 +1,13 @@
 package pl.filmoteka.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +15,8 @@ import java.util.Set;
  * Entity that represents a movie.
  */
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property="@movieId")
 public class Movie {
 
     @Id
@@ -29,7 +34,7 @@ public class Movie {
     private String genre;
 
     @Column
-    private LocalDateTime releaseDate;
+    private LocalDate releaseDate;
 
     @Column
     private String language;
@@ -45,19 +50,23 @@ public class Movie {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class, mappedBy = "movies")
     private Set<User> users = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "director_id", nullable = false)
     private Director director;
 
     public Movie() {
     }
 
-    public Movie(String name, int duration, String genre, LocalDateTime releaseDate, String language) {
+    public Movie(String name, int duration, String genre, LocalDate releaseDate, String language) {
         this.name = name;
         this.duration = duration;
         this.genre = genre;
         this.releaseDate = releaseDate;
         this.language = language;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -84,11 +93,11 @@ public class Movie {
         this.genre = genre;
     }
 
-    public LocalDateTime getReleaseDate() {
+    public LocalDate getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(LocalDateTime releaseDate) {
+    public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
 

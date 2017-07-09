@@ -3,7 +3,6 @@ package pl.filmoteka.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.model.Movie;
-import pl.filmoteka.repository.MovieRepository;
 import pl.filmoteka.service.MovieService;
 
 import java.util.List;
@@ -18,9 +17,19 @@ public class MoviesController {
     @Autowired
     private MovieService movieService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<Movie> findAll() {
         return movieService.findAllMovies();
+    }
+
+    @RequestMapping(value = "name", method = RequestMethod.GET)
+    public List<Movie> findByName(@RequestParam(value = "name") String name) {
+        return movieService.findByName(name);
+    }
+
+    @RequestMapping(value = "genre", method = RequestMethod.GET)
+    public List<Movie> findByGenre(@RequestParam(value = "genre") String genre) {
+        return movieService.findByGenre(genre);
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)

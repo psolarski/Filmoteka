@@ -19,7 +19,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Integration test for UserController.
+ * End-to-end test for UserController.
  */
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
@@ -35,7 +35,7 @@ public class UserControllerFullIntegrationTest {
 
     @Test
     public void getAllUsers() {
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("user", "password")
+        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
                 .getForEntity("/api/v1/users/all", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -49,7 +49,7 @@ public class UserControllerFullIntegrationTest {
 
     @Test
     public void getUsersByLogin() {
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("user", "password")
+        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
                 .getForEntity("/api/v1/users/login?login=login2", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -62,7 +62,7 @@ public class UserControllerFullIntegrationTest {
 
     @Test
     public void getUsersByEmail() {
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("user", "password")
+        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
                 .getForEntity("/api/v1/users/email?email=doo2@bee.doo", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -87,7 +87,7 @@ public class UserControllerFullIntegrationTest {
     public void deleteUser() {
         testRestTemplate.withBasicAuth("admin", "password").delete("/api/v1/users/delete?id=1");
 
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("user", "password")
+        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
                 .getForEntity("/api/v1/users/all", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
