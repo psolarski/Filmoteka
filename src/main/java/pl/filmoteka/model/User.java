@@ -3,17 +3,17 @@ package pl.filmoteka.model;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.Email;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Entity that represents an user.
- *
- * TODO: add roles and authorization
  */
 @Entity
+@Table(name = "user")
+@NamedEntityGraph(name = "graph.User.movies",
+        attributeNodes = @NamedAttributeNode("movies"))
 public class User {
 
     @Id
@@ -94,11 +94,31 @@ public class User {
         this.roles = roles;
     }
 
+    public Set<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(Set<Movie> movies) {
+        this.movies = movies;
+    }
+
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return new HashCodeBuilder().append(id)
+                .append(login)
+                .append(email)
+                .toHashCode();
     }
 
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

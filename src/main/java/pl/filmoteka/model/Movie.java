@@ -134,7 +134,10 @@ public class Movie {
     }
 
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return new HashCodeBuilder().append(id)
+                .append(name)
+                .append(duration)
+                .toHashCode();
     }
 
     public boolean equals(Object obj) {

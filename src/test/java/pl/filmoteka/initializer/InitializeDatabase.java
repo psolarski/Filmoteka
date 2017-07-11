@@ -2,7 +2,6 @@ package pl.filmoteka.initializer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import pl.filmoteka.model.Actor;
 import pl.filmoteka.model.Director;
@@ -17,11 +16,9 @@ import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 
 /**
- * Created by Piotr on 13.04.2017.
+ * Class responsible for initialize database before all tests.
  */
-
 @Component
-@PropertySource("classpath:applicationTest.properties")
 public class InitializeDatabase {
 
     @Value("${test.db.initializer.actors.size}")
