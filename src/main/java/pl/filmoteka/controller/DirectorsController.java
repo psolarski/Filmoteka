@@ -1,6 +1,5 @@
 package pl.filmoteka.controller;
 
-import org.omg.PortableServer.REQUEST_PROCESSING_POLICY_ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.model.Director;
@@ -18,11 +17,26 @@ public class DirectorsController {
     @Autowired
     private DirectorService directorService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<Director> findAll() {
-
-        System.out.println();
         return directorService.findAllDirectors();
+    }
+
+    @RequestMapping(value = "name", method = RequestMethod.GET)
+    public List<Director> findByName(@RequestParam(value = "name") String name) {
+        return directorService.findByName(name);
+    }
+
+    @RequestMapping(value = "surname", method = RequestMethod.GET)
+    public List<Director> findBySurname(@RequestParam(value = "surname") String surname) {
+        return directorService.findBySurname(surname);
+    }
+
+    @RequestMapping(value = "nameorsurname", method = RequestMethod.GET)
+    public List<Director> findByNameOrSurname(@RequestParam(value = "name") String name,
+                                              @RequestParam(value = "surname") String surname
+    ) {
+        return directorService.findByNameOrSurname(name, surname);
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)

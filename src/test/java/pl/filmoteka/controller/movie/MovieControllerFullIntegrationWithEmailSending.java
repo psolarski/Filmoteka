@@ -14,7 +14,6 @@ import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.User;
 import pl.filmoteka.repository.UserRepository;
-import pl.filmoteka.service.MovieService;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
