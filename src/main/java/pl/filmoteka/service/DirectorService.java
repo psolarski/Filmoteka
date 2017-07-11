@@ -23,6 +23,21 @@ public class DirectorService {
     }
 
     @Transactional
+    public List<Director> findByName(String name) {
+        return directorRepository.findByName(name);
+    }
+
+    @Transactional
+    public List<Director> findBySurname(String surname) {
+        return directorRepository.findBySurname(surname);
+    }
+
+    @Transactional
+    public List<Director> findByNameOrSurname(String name, String surname) {
+        return directorRepository.findByNameOrSurname(name, surname);
+    }
+
+    @Transactional
     public Director addNewDirector(Director director) {
         return directorRepository.saveAndFlush(director);
     }

@@ -9,6 +9,7 @@ import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.User;
 import pl.filmoteka.repository.ActorRepository;
+import pl.filmoteka.repository.DirectorRepository;
 import pl.filmoteka.repository.MovieRepository;
 import pl.filmoteka.repository.UserRepository;
 
@@ -32,6 +33,9 @@ public class InitializeDatabase {
     @Value("${test.db.initializer.movies.size}")
     private Integer moviesSize;
 
+    @Value("${test.db.initializer.directors.size}")
+    private Integer directorsSize;
+
     @Autowired
     private ActorRepository actorRepository;
 
@@ -40,6 +44,9 @@ public class InitializeDatabase {
 
     @Autowired
     private MovieRepository movieRepository;
+
+    @Autowired
+    private DirectorRepository directorRepository;
 
     @PostConstruct
     public void initialize() {
@@ -65,6 +72,12 @@ public class InitializeDatabase {
                     "English");
             movie.setDirector(new Director("name" + i, "surname" + i, "American"));
             movieRepository.saveAndFlush(movie);
+        }
+
+        // Directors
+        for (int i = 0; i < directorsSize; i++) {
+            Director director = new Director("name" + i, "surname" + i, "American");
+            directorRepository.saveAndFlush(director);
         }
     }
 }

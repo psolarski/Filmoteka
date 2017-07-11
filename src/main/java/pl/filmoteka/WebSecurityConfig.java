@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * Class responsible for basic security
+ * Class responsible for basic security.
  */
 @Configuration
 @EnableWebSecurity
@@ -22,6 +22,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "api/v1/actors/").hasAnyRole("guest", "admin", "user")
                 .antMatchers(HttpMethod.POST, "api/v1/actors/create").hasAnyRole("admin", "user")
                 .antMatchers(HttpMethod.DELETE, "api/v1/actors/delete").hasRole("admin")
+                .antMatchers(HttpMethod.GET, "api/v1/directors/all").hasAnyRole("guest", "admin", "user")
+                .antMatchers(HttpMethod.GET, "api/v1/directors/name").hasAnyRole("guest", "admin", "user")
+                .antMatchers(HttpMethod.GET, "api/v1/directors/surname").hasAnyRole("guest", "admin", "user")
+                .antMatchers(HttpMethod.GET, "api/v1/directors/nameorsurname").hasAnyRole("guest", "admin", "user")
+                .antMatchers(HttpMethod.POST, "api/v1/directors/create").hasAnyRole("admin")
+                .antMatchers(HttpMethod.DELETE, "api/v1/directors/delete").hasRole("admin")
                 .antMatchers(HttpMethod.PUT, "api/v1/actors/update").hasAnyRole("admin", "user")
                 .antMatchers(HttpMethod.GET, "api/v1/users/all").hasAnyRole("admin")
                 .antMatchers(HttpMethod.GET, "api/v1/users/login").hasAnyRole("admin")
