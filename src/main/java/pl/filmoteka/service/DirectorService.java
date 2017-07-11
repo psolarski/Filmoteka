@@ -18,6 +18,11 @@ public class DirectorService {
     DirectorRepository directorRepository;
 
     @Transactional
+    public Director find(Long id) {
+        return directorRepository.findOne(id);
+    }
+
+    @Transactional
     public List<Director> findAllDirectors() {
         return directorRepository.findAll();
     }
@@ -45,5 +50,10 @@ public class DirectorService {
     @Transactional
     public void deleteDirector(Long id) {
         directorRepository.delete(id);
+    }
+
+    @Transactional
+    public Director updateDirector(Director director) {
+        return directorRepository.saveAndFlush(director);
     }
 }
