@@ -20,7 +20,7 @@ import java.time.LocalDate;
  */
 
 @Component
-@PropertySource("classpath:applicationTest.properties")
+@PropertySource("classpath:application.properties")
 public class InitializeDatabase {
 
     @Value("${test.db.initializer.actors.size}")
