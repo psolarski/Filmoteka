@@ -1,9 +1,10 @@
 package pl.filmoteka.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.aspect.Monitored;
-import pl.filmoteka.configuration.MyBean;
 import pl.filmoteka.model.Actor;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.service.ActorService;
@@ -20,13 +21,27 @@ public class ActorsController {
     @Autowired
     private ActorService actorService;
 
-    @Autowired
-    private MyBean myBean;
-
     @Monitored
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<Actor> findAll() {
         return actorService.findAllActors();
+    }
+
+    @RequestMapping(value = "name", method = RequestMethod.GET)
+    public List<Actor> findByName(@RequestParam(value = "name") String name) {
+        return actorService.findActorByName(name);
+    }
+
+    @RequestMapping(value = "surname", method = RequestMethod.GET)
+    public List<Actor> findBySurname(@RequestParam(value = "surname") String surname) {
+        return actorService.findActorBySurname(surname);
+    }
+
+    @RequestMapping(value = "nameorsurname", method = RequestMethod.GET)
+    public List<Actor> findByNameOrSurname(@RequestParam(value = "name") String name,
+                                              @RequestParam(value = "surname") String surname
+    ) {
+        return actorService.findActorByNameOrSurname(name, surname);
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
@@ -45,4 +60,23 @@ public class ActorsController {
         actorService.addFilm(id, movie);
     }
 
+    @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Actor> updateActor(@PathVariable("id") long id, @RequestBody Actor modifiedActor) {
+        // Get already stored actor with given id
+        Actor storedActor = actorService.find(id);
+
+        if (storedActor == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Explicitly set passed values
+        storedActor.setName(modifiedActor.getName());
+        storedActor.setSurname(modifiedActor.getSurname());
+        storedActor.setNationality(modifiedActor.getNationality());
+        storedActor.setMovies(modifiedActor.getMovies());
+
+        Actor updatedEntity = actorService.updateActor(storedActor);
+
+        return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
+    }
 }

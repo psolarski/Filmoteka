@@ -18,6 +18,11 @@ public class UserService {
     private UserRepository userRepository;
 
     @Transactional
+    public User find(Long id) {
+        return userRepository.findOne(id);
+    }
+
+    @Transactional
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
@@ -40,5 +45,10 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         userRepository.delete(id);
+    }
+
+    @Transactional
+    public User updateUser(User user) {
+        return userRepository.saveAndFlush(user);
     }
 }

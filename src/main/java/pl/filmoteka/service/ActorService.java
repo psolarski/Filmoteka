@@ -19,6 +19,11 @@ public class ActorService {
     ActorRepository actorRepository;
 
     @Transactional
+    public Actor find(Long id) {
+        return actorRepository.findOne(id);
+    }
+
+    @Transactional
     public List<Actor> findAllActors() {
         return actorRepository.findAll();
     }
@@ -58,8 +63,7 @@ public class ActorService {
     }
 
     @Transactional
-    public Actor findById(Long id) {
-        return actorRepository.findOne(id);
+    public Actor updateActor(Actor actor) {
+        return actorRepository.saveAndFlush(actor);
     }
-
 }

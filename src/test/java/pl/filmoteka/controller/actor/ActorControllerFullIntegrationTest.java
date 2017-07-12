@@ -31,7 +31,7 @@ public class ActorControllerFullIntegrationTest {
     @Test
     public void ensureThatAllActorsAreReturnedFromEndpoint() {
 
-        ResponseEntity<String> allActorsResponse = testRestTemplate.withBasicAuth("user", "password").getForEntity("/api/v1/actors/", String.class);
+        ResponseEntity<String> allActorsResponse = testRestTemplate.withBasicAuth("user", "password").getForEntity("/api/v1/actors/all", String.class);
 
         assertThat(allActorsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 

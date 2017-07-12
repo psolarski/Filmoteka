@@ -1,6 +1,8 @@
 package pl.filmoteka.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.model.User;
 import pl.filmoteka.service.UserService;
@@ -40,5 +42,23 @@ public class UsersController {
     @RequestMapping(value = "delete", method = RequestMethod.DELETE)
     public void deleteUser(@RequestParam(value = "id") Long id) {
         userService.deleteUser(id);
+    }
+
+    @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<User> updateDirector(@PathVariable("id") long id, @RequestBody User modifiedUser) {
+        // Get already stored user with given id
+        User storedUser = userService.find(id);
+
+        if (storedUser == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Explicitly set passed values
+        storedUser.setEmail(modifiedUser.getEmail());
+        storedUser.setMovies(modifiedUser.getMovies());
+
+        User updatedEntity = userService.updateUser(storedUser);
+
+        return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
     }
 }

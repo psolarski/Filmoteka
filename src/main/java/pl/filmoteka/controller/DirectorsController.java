@@ -66,8 +66,8 @@ public class DirectorsController {
         storedDirector.setNationality(modifiedDirector.getNationality());
         storedDirector.setMovies(modifiedDirector.getMovies());
 
-        directorService.updateDirector(storedDirector);
+        Director updatedEntity = directorService.updateDirector(storedDirector);
 
-        return new ResponseEntity<>(storedDirector, HttpStatus.OK);
+        return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
     }
 }
