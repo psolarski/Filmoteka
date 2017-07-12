@@ -8,9 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.model.Actor;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -24,7 +24,7 @@ public class WebSecurityActorControllerTests {
     public void ensureThatGuestIsAbleToReceiveActorsList() {
         ResponseEntity<String> allActorsResponse = testRestTemplate.
                                                     withBasicAuth("guest", "password").
-                                                    getForEntity("/api/v1/actors/", String.class);
+                                                    getForEntity("/api/v1/actors/all", String.class);
 
         assertThat(allActorsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -33,7 +33,7 @@ public class WebSecurityActorControllerTests {
     public void ensureThatUserIsAbleToReceiveActorsList() {
         ResponseEntity<String> allActorsResponse = testRestTemplate.
                                                     withBasicAuth("user", "password").
-                                                    getForEntity("/api/v1/actors/", String.class);
+                                                    getForEntity("/api/v1/actors/all", String.class);
 
         assertThat(allActorsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -42,7 +42,7 @@ public class WebSecurityActorControllerTests {
     public void ensureThatAdminIsAbleToReceiveActorsList() {
         ResponseEntity<String> allActorsResponse = testRestTemplate.
                                                     withBasicAuth("admin", "password").
-                                                    getForEntity("/api/v1/actors/", String.class);
+                                                    getForEntity("/api/v1/actors/all", String.class);
 
         assertThat(allActorsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }

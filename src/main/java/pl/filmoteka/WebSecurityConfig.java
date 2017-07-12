@@ -19,7 +19,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, "api/v1/actors/").hasAnyRole("guest", "admin", "user")
+                .antMatchers(HttpMethod.GET, "api/v1/actors/all").hasAnyRole("guest", "admin", "user")
                 .antMatchers(HttpMethod.POST, "api/v1/actors/create").hasAnyRole("admin", "user")
                 .antMatchers(HttpMethod.DELETE, "api/v1/actors/delete").hasRole("admin")
                 .antMatchers(HttpMethod.GET, "api/v1/directors/all").hasAnyRole("guest", "admin", "user")
