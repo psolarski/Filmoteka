@@ -1,6 +1,8 @@
 package pl.filmoteka.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.service.MovieService;
@@ -40,5 +42,27 @@ public class MoviesController {
     @RequestMapping(value = "delete", method = RequestMethod.DELETE)
     public void deleteMovie(@RequestParam(value = "id") Long id) {
         movieService.deleteMovie(id);
+    }
+
+    @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Movie> updateDirector(@PathVariable("id") long id, @RequestBody Movie modifiedMovie) {
+        // Get already stored movie with given id
+        Movie storedMovie = movieService.find(id);
+
+        if (storedMovie == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Explicitly set passed values
+        storedMovie.setName(modifiedMovie.getName());
+        storedMovie.setDirector(modifiedMovie.getDirector());
+        storedMovie.setDuration(modifiedMovie.getDuration());
+        storedMovie.setGenre(modifiedMovie.getGenre());
+        storedMovie.setLanguage(modifiedMovie.getLanguage());
+        storedMovie.setReleaseDate(modifiedMovie.getReleaseDate());
+
+        Movie updatedEntity = movieService.updateMovie(storedMovie);
+
+        return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
     }
 }

@@ -45,7 +45,7 @@ public class UsersController {
     }
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<User> updateDirector(@PathVariable("id") long id, @RequestBody User modifiedUser) {
+    public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User modifiedUser) {
         // Get already stored user with given id
         User storedUser = userService.find(id);
 

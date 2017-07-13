@@ -1,6 +1,7 @@
 package pl.filmoteka.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import pl.filmoteka.model.Movie;
@@ -12,7 +13,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.springframework.mail.SimpleMailMessage;
 
 
 /**
@@ -30,6 +30,10 @@ public class MovieService {
     @Autowired
     JavaMailSenderImpl mailSender;
 
+    @Transactional
+    public Movie find(Long id) {
+        return movieRepository.findOne(id);
+    }
 
     @Transactional
     public List<Movie> findAllMovies() {
@@ -52,6 +56,11 @@ public class MovieService {
     @Transactional
     public void deleteMovie(Long id) {
         movieRepository.delete(id);
+    }
+
+    @Transactional
+    public Movie updateMovie(Movie movie) {
+        return movieRepository.saveAndFlush(movie);
     }
 
     /**
