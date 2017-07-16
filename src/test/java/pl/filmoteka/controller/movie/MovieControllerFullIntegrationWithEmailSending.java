@@ -13,6 +13,7 @@ import pl.filmoteka.controller.MoviesController;
 import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.User;
+import pl.filmoteka.repository.MovieRepository;
 import pl.filmoteka.repository.UserRepository;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -32,6 +33,9 @@ public class MovieControllerFullIntegrationWithEmailSending {
 
     @Autowired
     private MoviesController moviesController;
+
+    @Autowired
+    private MovieRepository movieRepository;
 
     private GreenMail greenMail;
 
@@ -63,6 +67,7 @@ public class MovieControllerFullIntegrationWithEmailSending {
 
         /* cleaning */
         userRepository.delete(user);
+        movieRepository.delete(movie);
     }
 
     @After
