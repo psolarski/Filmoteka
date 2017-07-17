@@ -10,6 +10,9 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.model.Actor;
 import pl.filmoteka.model.Director;
+import pl.filmoteka.model.Movie;
+
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -482,6 +485,236 @@ public class WebSecurityActorControllerTests {
         HttpEntity<Director> httpEntity = new HttpEntity<>(director, new HttpHeaders());
         ResponseEntity<Director> responseOnUpdated = testRestTemplate.withBasicAuth("admin", "password")
                 .exchange("/api/v1/directors/update/" + director.getId(), HttpMethod.PUT, httpEntity, Director.class);
+
+        assertThat(responseOnUpdated.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+
+
+
+
+
+
+
+
+
+    // MovieController - get all movie
+    @Test
+    public void ensureThatGuestIsAbleToReceiveAllMoviesList() {
+        ResponseEntity<String> response = testRestTemplate.
+                getForEntity("/api/v1/movies/all", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void ensureThatUserIsAbleToReceiveAllMoviesList() {
+        ResponseEntity<String> response = testRestTemplate.
+                withBasicAuth("user", "password").
+                getForEntity("/api/v1/movies/all", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void ensureThatAdminIsAbleToReceiveAllMoviesList() {
+        ResponseEntity<String> response = testRestTemplate.
+                withBasicAuth("admin", "password").
+                getForEntity("/api/v1/movies/all", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    // MovieController - get movies by name
+    @Test
+    public void ensureThatGuestIsAbleToReceiveMoviesListByName() {
+        ResponseEntity<String> response = testRestTemplate.
+                getForEntity("/api/v1/movies/name?name=some", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void ensureThatUserIsAbleToReceiveMoviesListByName() {
+        ResponseEntity<String> response = testRestTemplate.
+                withBasicAuth("user", "password").
+                getForEntity("/api/v1/movies/name?name=some", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void ensureThatAdminIsAbleToReceiveMoviesListByName() {
+        ResponseEntity<String> response = testRestTemplate.
+                withBasicAuth("admin", "password").
+                getForEntity("/api/v1/movies/name?name=some", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    // MovieController - get directors by surname
+    @Test
+    public void ensureThatGuestIsAbleToReceiveMoviesListByGenre() {
+        ResponseEntity<String> response = testRestTemplate.
+                getForEntity("/api/v1/movies/genre?genre=some", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void ensureThatUserIsAbleToReceiveMoviesListBySurname() {
+        ResponseEntity<String> response = testRestTemplate.
+                withBasicAuth("user", "password").
+                getForEntity("/api/v1/movies/genre?genre=some", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void ensureThatAdminIsAbleToReceiveMoviesListByGenre() {
+        ResponseEntity<String> response = testRestTemplate.
+                withBasicAuth("admin", "password").
+                getForEntity("/api/v1/movies/genre?genre=some", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    // MovieController - create movie
+    @Test
+    public void ensureThatGuestIsNotAbleToCreateMovie() {
+        Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
+        Director director = new Director("Test", "test", "test");
+        movie.setDirector(director);
+
+        ResponseEntity<Movie> response = testRestTemplate.
+                postForEntity("/api/v1/movies/create", movie, Movie.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    public void ensureThatUserIsNotAbleToCreateMovie() {
+        Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
+        Director director = new Director("Test", "test", "test");
+        movie.setDirector(director);
+
+        ResponseEntity<Movie> response = testRestTemplate.
+                withBasicAuth("user", "password").
+                postForEntity("/api/v1/movies/create", movie, Movie.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    public void ensureThatAdminIsAbleToCreateNewMovie() {
+        Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
+        Director director = new Director("Test", "test", "test");
+        movie.setDirector(director);
+
+        ResponseEntity<Movie> response = testRestTemplate.
+                withBasicAuth("admin", "password").
+                postForEntity("/api/v1/movies/create", movie, Movie.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    // MovieController - delete movie
+    // We can just try to delete some nonexistent movie
+    @Test
+    public void ensureThatGuestIsNotAbleToDeleteMovie() {
+        ResponseEntity<Void> response = testRestTemplate
+                .exchange("/api/v1/movies/delete?id=1", HttpMethod.DELETE, null, Void.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    public void ensureThatUserIsNotAbleToDeleteMovie() {
+        ResponseEntity<Void> response = testRestTemplate.withBasicAuth("user", "password")
+                .exchange("/api/v1/movies/delete?id=1", HttpMethod.DELETE, null, Void.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    public void ensureThatAdminIsAbleToDeleteMovie() {
+        Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
+        Director director = new Director("Test", "test", "test");
+        movie.setDirector(director);
+
+        ResponseEntity<Movie> response = testRestTemplate.
+                withBasicAuth("admin", "password").
+                postForEntity("/api/v1/movies/create", movie, Movie.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        movie = response.getBody();
+        ResponseEntity<Void> responseOnDelete = testRestTemplate.withBasicAuth("admin", "password")
+                .exchange("/api/v1/movies/delete?id=" + movie.getId(), HttpMethod.DELETE, null, Void.class);
+
+        assertThat(responseOnDelete.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    // MovieController - update existing director
+    @Test
+    public void ensureThatGuestIsNotAbleToUpdateMovie() {
+        Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
+        Director director = new Director("Test", "test", "test");
+        movie.setDirector(director);
+
+        ResponseEntity<Movie> response = testRestTemplate.
+                withBasicAuth("admin", "password").
+                postForEntity("/api/v1/movies/create", movie, Movie.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // We don't have to change movie - just test permissions
+        movie = response.getBody();
+        HttpEntity<Movie> httpEntity = new HttpEntity<>(movie, new HttpHeaders());
+        ResponseEntity<Director> responseOnUpdated = testRestTemplate
+                .exchange("/api/v1/movies/update/" + movie.getId(), HttpMethod.PUT, httpEntity, Director.class);
+
+        assertThat(responseOnUpdated.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    public void ensureThatUserIsNotAbleToUpdateMovie() {
+        Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
+        Director director = new Director("Test", "test", "test");
+        movie.setDirector(director);
+
+        ResponseEntity<Movie> response = testRestTemplate.
+                withBasicAuth("admin", "password").
+                postForEntity("/api/v1/movies/create", movie, Movie.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // We don't have to change movie - just test permissions
+        movie = response.getBody();
+        HttpEntity<Movie> httpEntity = new HttpEntity<>(movie, new HttpHeaders());
+        ResponseEntity<Director> responseOnUpdated = testRestTemplate.withBasicAuth("user", "password")
+                .exchange("/api/v1/movies/update/" + movie.getId(), HttpMethod.PUT, httpEntity, Director.class);
+
+        assertThat(responseOnUpdated.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    public void ensureThatAdminIsAbleToUpdateMovie() {
+        Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
+        Director director = new Director("Test", "test", "test");
+        movie.setDirector(director);
+
+        ResponseEntity<Movie> response = testRestTemplate.
+                withBasicAuth("admin", "password").
+                postForEntity("/api/v1/movies/create", movie, Movie.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // We don't have to change movie - just test permissions
+        movie = response.getBody();
+        HttpEntity<Movie> httpEntity = new HttpEntity<>(movie, new HttpHeaders());
+        ResponseEntity<Director> responseOnUpdated = testRestTemplate.withBasicAuth("admin", "password")
+                .exchange("/api/v1/movies/update/" + movie.getId(), HttpMethod.PUT, httpEntity, Director.class);
 
         assertThat(responseOnUpdated.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
