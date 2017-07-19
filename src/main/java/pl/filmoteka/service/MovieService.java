@@ -86,7 +86,7 @@ public class MovieService {
             message.setFrom("Filmoteka");
             message.setTo(user.getEmail());
             message.setSubject("New Movie");
-            message.setText("Dear " + user.getLogin() + " new movie " +
+            message.setText("Dear " + user.getUsername() + " new movie " +
                             createdMovie.getName() + " has been added to our " +
                             "system, hope you will like it.");
             mailSender.send(message);

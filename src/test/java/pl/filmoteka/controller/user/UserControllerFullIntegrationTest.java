@@ -37,22 +37,20 @@ public class UserControllerFullIntegrationTest {
 
         JsonPath path = new JsonPath(response.getBody());
 
-        assertThat((List<?>) path.get("login")).isNotNull().isNotEmpty().hasSize(usersSize);
-        assertThat((List<?>) path.get("password")).isNotNull().isNotEmpty().hasSize(usersSize);
-        assertThat((List<?>) path.get("email")).isNotNull().isNotEmpty().hasSize(usersSize);
+        assertThat((List<?>) path.get("username")).isNotNull().isNotEmpty();
+        assertThat((List<?>) path.get("password")).isNotNull().isNotEmpty();
+        assertThat((List<?>) path.get("email")).isNotNull().isNotEmpty();
     }
 
     @Test
-    public void getUsersByLogin() {
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
-                .getForEntity("/api/v1/users/login?login=login2", String.class);
+    public void getUsersByUsername() {
+        ResponseEntity<User> response = testRestTemplate.withBasicAuth("admin", "password")
+                .getForEntity("/api/v1/users/username?username=username2", User.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        JsonPath path = new JsonPath(response.getBody());
-
-        assertThat((List<?>) path.get("login")).isNotNull().isNotEmpty()
-                .hasSize(1);
+        assertThat(response).isNotNull();
+        assertThat(response.getBody().getUsername()).isEqualTo("username2");
     }
 
     @Test
@@ -89,20 +87,20 @@ public class UserControllerFullIntegrationTest {
 
         JsonPath path = new JsonPath(response.getBody());
 
-        List <String> returnedLogins = path.get("login");
-        assertThat(returnedLogins).isNotNull().isNotEmpty().doesNotContain("login0");
+        List<String> returnedLogins = path.get("username");
+        assertThat(returnedLogins).isNotNull().isNotEmpty().doesNotContain("username0");
     }
 
     @Test
-    public void updateDirector() {
-        // First, create an user
+    public void updateUser() {
+        // First, create an User
         User user = new User("updateUserTest", "password", "updateUserTest@email.com");
 
         ResponseEntity<User> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
                 .postForEntity("/api/v1/users/create", user, User.class);
         assertThat(responseOnCreated.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Check whether the application properly stored the user
+        // Check whether the application properly stored the User
         ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
                 .getForEntity("/api/v1/users/all", String.class);
 
@@ -110,10 +108,10 @@ public class UserControllerFullIntegrationTest {
 
         JsonPath path = new JsonPath(response.getBody());
 
-        List <String> returnedNames = path.get("login");
+        List<String> returnedNames = path.get("username");
         assertThat(returnedNames).isNotNull().isNotEmpty().contains("updateUserTest");
 
-        // Update user
+        // Update User
         user = responseOnCreated.getBody();
         user.setEmail("updateDirectorTestNewEmail@email.com");
 
@@ -130,7 +128,7 @@ public class UserControllerFullIntegrationTest {
 
         JsonPath pathAfterUpdate = new JsonPath(responseAfterUpdate.getBody());
 
-        List <String> returnedEmailsAfterUpdate = pathAfterUpdate.get("email");
+        List<String> returnedEmailsAfterUpdate = pathAfterUpdate.get("email");
         assertThat(returnedEmailsAfterUpdate).isNotNull().isNotEmpty().contains("updateDirectorTestNewEmail@email.com");
     }
 }

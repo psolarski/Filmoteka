@@ -4,13 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.filmoteka.model.Role;
 import pl.filmoteka.model.User;
+import pl.filmoteka.service.RoleService;
 import pl.filmoteka.service.UserService;
 
 import java.util.List;
 
 /**
- * Controller for user management.
+ * Controller for User management.
  */
 @RestController
 @RequestMapping("api/v1/users/")
@@ -19,14 +21,17 @@ public class UsersController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleService roleService;
+
     @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<User> findAll() {
         return userService.findAllUsers();
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.GET)
-    public List<User> findByLogin(@RequestParam(value = "login") String login) {
-        return userService.findByLogin(login);
+    @RequestMapping(value = "username", method = RequestMethod.GET)
+    public User findByLogin(@RequestParam(value = "username") String username) {
+        return userService.findByUsername(username);
     }
 
     @RequestMapping(value = "email", method = RequestMethod.GET)
@@ -46,7 +51,7 @@ public class UsersController {
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
     public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User modifiedUser) {
-        // Get already stored user with given id
+        // Get already stored User with given id
         User storedUser = userService.find(id);
 
         if (storedUser == null) {
@@ -58,6 +63,26 @@ public class UsersController {
         storedUser.setMovies(modifiedUser.getMovies());
 
         User updatedEntity = userService.updateUser(storedUser);
+
+        return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "assignrole/{id}", method = RequestMethod.POST)
+    public ResponseEntity<User> assignRole(@PathVariable("id") Long id, @RequestBody Role role) {
+        User user = userService.find(id);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        role = roleService.find(role.getName());
+
+        if (role == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        user.assignRole(role);
+        User updatedEntity = userService.updateUser(user);
 
         return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
     }

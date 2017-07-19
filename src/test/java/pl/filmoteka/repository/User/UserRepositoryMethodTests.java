@@ -1,4 +1,4 @@
-package pl.filmoteka.repository.user;
+package pl.filmoteka.repository.User;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,19 +9,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.model.User;
 import pl.filmoteka.repository.UserRepository;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for user repository.
+ * Tests for User repository.
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class UserRepositoryMethodTests {
 
     // Sample data
-    private static final String login = "somelogin";
+    private static final String username = "someusername";
 
     private static final String password = "pass";
 
@@ -33,20 +31,20 @@ public class UserRepositoryMethodTests {
     @Test
     @Rollback
     public void testFindByLogin() {
-        User user = new User(login, password, email);
+        User user = new User(username, password, email);
         userRepository.saveAndFlush(user);
-        List<User> foundUsers = userRepository.findByLogin(login);
+        User foundUser = userRepository.findByUsername(username);
 
-        assertThat(foundUsers).contains(user).hasSize(1);
+        assertThat(foundUser).isEqualTo(user);
     }
 
     @Test
     @Rollback
     public void testFindByLoginInvalid() {
-        User user = new User(login, password, email);
+        User user = new User(username, password, email);
         userRepository.saveAndFlush(user);
-        List<User> foundUsers = userRepository.findByLogin("dummy");
+        User foundUser = userRepository.findByUsername("dummy");
 
-        assertThat(foundUsers).doesNotContain(user).hasSize(0);
+        assertThat(foundUser).isNull();
     }
 }

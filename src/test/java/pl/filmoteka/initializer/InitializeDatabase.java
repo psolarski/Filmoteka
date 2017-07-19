@@ -55,7 +55,7 @@ public class InitializeDatabase {
 
         // Users
         for (int i = 0; i < usersSize; i++) {
-            User user = new User("login" + i, "password", "doo" + i + "@bee.doo");
+            User user = new User("username" + i, "password", "doo" + i + "@bee.doo");
             userRepository.saveAndFlush(user);
         }
 

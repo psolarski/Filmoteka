@@ -5,17 +5,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.filmoteka.model.User;
 import pl.filmoteka.repository.UserRepository;
+import pl.filmoteka.util.PasswordEncoderProvider;
 
 import java.util.List;
 
 /**
- * Service class for user management.
+ * Service class for User management.
  */
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoderProvider passwordEncoderProvider;
 
     @Transactional
     public User find(Long id) {
@@ -28,8 +32,8 @@ public class UserService {
     }
 
     @Transactional
-    public List<User> findByLogin(String login) {
-        return userRepository.findByLogin(login);
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @Transactional
@@ -39,6 +43,8 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
+        user.setPassword(passwordEncoderProvider.getEncoder().encode(user.getPassword()));
+
         return userRepository.saveAndFlush(user);
     }
 
