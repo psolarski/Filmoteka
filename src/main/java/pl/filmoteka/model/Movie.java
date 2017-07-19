@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -53,6 +54,10 @@ public class Movie {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "director_id", nullable = false)
     private Director director;
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = Rating.class, mappedBy = "movie",
+                                                                    cascade = CascadeType.REMOVE)
+    private Set<Rating> ratings = new HashSet<>();
 
     public Movie() {
     }
