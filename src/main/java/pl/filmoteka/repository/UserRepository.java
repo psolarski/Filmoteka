@@ -7,7 +7,7 @@ import pl.filmoteka.model.User;
 import java.util.List;
 
 /**
- * Repository class for User entity.
+ * Repository class for user entity.
  */
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -15,6 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByEmail(String email);
 
-    @EntityGraph("graph.User.movies")
+    @EntityGraph("graph.user.movies")
     List<User> findAll();
 }

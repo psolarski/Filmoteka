@@ -10,7 +10,7 @@ import pl.filmoteka.util.PasswordEncoderProvider;
 import java.util.List;
 
 /**
- * Service class for User management.
+ * Service class for user management.
  */
 @Service
 public class UserService {

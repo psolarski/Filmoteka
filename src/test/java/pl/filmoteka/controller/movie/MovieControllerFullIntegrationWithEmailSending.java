@@ -63,7 +63,7 @@ public class MovieControllerFullIntegrationWithEmailSending {
 
         Message[] messages = greenMail.getReceivedMessages();
         assertEquals(1, messages.length);
-        assertEquals("New Movie", messages[0].getSubject());
+        assertEquals("New movie", messages[0].getSubject());
 
         /* cleaning */
         userRepository.delete(user);

@@ -12,7 +12,7 @@ import pl.filmoteka.service.UserService;
 import java.util.List;
 
 /**
- * Controller for User management.
+ * Controller for user management.
  */
 @RestController
 @RequestMapping("api/v1/users/")
@@ -51,7 +51,7 @@ public class UsersController {
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
     public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User modifiedUser) {
-        // Get already stored User with given id
+        // Get already stored user with given id
         User storedUser = userService.find(id);
 
         if (storedUser == null) {
@@ -67,8 +67,8 @@ public class UsersController {
         return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "assignrole/{id}", method = RequestMethod.POST)
-    public ResponseEntity<User> assignRole(@PathVariable("id") Long id, @RequestBody Role role) {
+    @RequestMapping(value = "{user_id}/assignrole", method = RequestMethod.POST)
+    public ResponseEntity<User> assignRole(@PathVariable("user_id") Long id, @RequestBody Role role) {
         User user = userService.find(id);
 
         if (user == null) {
@@ -78,7 +78,7 @@ public class UsersController {
         role = roleService.find(role.getName());
 
         if (role == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         user.assignRole(role);

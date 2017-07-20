@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Movie Service
+ * movie Service
  */
 @Service
 public class MovieService {
@@ -85,7 +85,7 @@ public class MovieService {
         usersListWithGenre.forEach(user -> {
             message.setFrom("Filmoteka");
             message.setTo(user.getEmail());
-            message.setSubject("New Movie");
+            message.setSubject("New movie");
             message.setText("Dear " + user.getUsername() + " new movie " +
                             createdMovie.getName() + " has been added to our " +
                             "system, hope you will like it.");

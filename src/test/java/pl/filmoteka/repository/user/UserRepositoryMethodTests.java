@@ -1,4 +1,4 @@
-package pl.filmoteka.repository.User;
+package pl.filmoteka.repository.user;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +12,7 @@ import pl.filmoteka.repository.UserRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for User repository.
+ * Tests for user repository.
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest

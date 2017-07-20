@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import pl.filmoteka.model.Role;
 import pl.filmoteka.model.User;
 
 import java.util.List;
@@ -93,14 +94,14 @@ public class UserControllerFullIntegrationTest {
 
     @Test
     public void updateUser() {
-        // First, create an User
+        // First, create an user
         User user = new User("updateUserTest", "password", "updateUserTest@email.com");
 
         ResponseEntity<User> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
                 .postForEntity("/api/v1/users/create", user, User.class);
         assertThat(responseOnCreated.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Check whether the application properly stored the User
+        // Check whether the application properly stored the user
         ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
                 .getForEntity("/api/v1/users/all", String.class);
 
@@ -111,7 +112,7 @@ public class UserControllerFullIntegrationTest {
         List<String> returnedNames = path.get("username");
         assertThat(returnedNames).isNotNull().isNotEmpty().contains("updateUserTest");
 
-        // Update User
+        // Update user
         user = responseOnCreated.getBody();
         user.setEmail("updateDirectorTestNewEmail@email.com");
 
@@ -130,5 +131,26 @@ public class UserControllerFullIntegrationTest {
 
         List<String> returnedEmailsAfterUpdate = pathAfterUpdate.get("email");
         assertThat(returnedEmailsAfterUpdate).isNotNull().isNotEmpty().contains("updateDirectorTestNewEmail@email.com");
+    }
+
+    @Test
+    public void testAssignRoleToUser() {
+        User user = new User("testAssignRole", "password", "testAssignRole@email.com");
+
+        ResponseEntity<User> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
+                .postForEntity("/api/v1/users/create", user, User.class);
+        assertThat(responseOnCreated.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        user = responseOnCreated.getBody();
+
+        assertThat(user.getRoles()).isEmpty();
+
+        Role role = testRestTemplate.withBasicAuth("admin", "password").getForEntity("/api/v1/roles/name/USER", Role.class).getBody();
+        ResponseEntity<User> responseOnModified = testRestTemplate.withBasicAuth("admin", "password")
+                .postForEntity("/api/v1/users/" + user.getId() + "/assignrole", role, User.class);
+        user = responseOnModified.getBody();
+
+        assertThat(responseOnModified.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(user.getRoles().stream().anyMatch(r -> r.getName().equals("USER"))).isTrue();
     }
 }

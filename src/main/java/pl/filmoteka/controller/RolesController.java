@@ -1,10 +1,7 @@
 package pl.filmoteka.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.model.Role;
 import pl.filmoteka.service.RoleService;
 
@@ -20,6 +17,11 @@ public class RolesController {
     @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<Role> findAll() {
         return roleService.findAllRoles();
+    }
+
+    @RequestMapping(value = "name/{name}", method = RequestMethod.GET)
+    public Role findByName(@PathVariable("name") String name) {
+        return roleService.find(name.toUpperCase());
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)

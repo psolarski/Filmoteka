@@ -1,6 +1,7 @@
 package pl.filmoteka.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -17,11 +18,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Entity that represents an User.
+ * Entity that represents an user.
  */
 @Entity
-@Table(name = "User")
-@NamedEntityGraph(name = "graph.User.movies",
+@Table(name = "user")
+@NamedEntityGraph(name = "graph.user.movies",
         attributeNodes = @NamedAttributeNode("movies"))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property="@userId")
 public class User implements UserDetails {
@@ -54,7 +55,7 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-    // List of movies that the User has watched
+    // List of movies that the user has watched
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = Movie.class, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "watched_movies",
@@ -77,6 +78,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (roles.isEmpty() || roles == null) {
             return Collections.emptySet();
@@ -162,7 +164,7 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "user{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
