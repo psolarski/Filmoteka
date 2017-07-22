@@ -60,6 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/v1/movies/all").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/movies/name").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/movies/genre").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/v1/movies/**/reviews").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/movies/create").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/api/v1/movies/delete").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/api/v1/movies/update/**").hasRole("ADMIN")

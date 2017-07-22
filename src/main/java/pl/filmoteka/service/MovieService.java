@@ -1,12 +1,9 @@
 package pl.filmoteka.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import pl.filmoteka.exception.InvalidApplicationConfigurationException;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.User;
@@ -35,15 +32,6 @@ public class MovieService {
 
     @Autowired
     private JavaMailSenderImpl mailSender;
-
-    @Value("${api.key.nyt}")
-    private String nytApiKey;
-
-    @Value("${api.url.nyt.review}")
-    private String nytApiUrl;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Autowired
     private NytCriticReviewRepository nytCriticReviewRepository;
@@ -122,10 +110,5 @@ public class MovieService {
                             "system, hope you will like it.");
             mailSender.send(message);
         });
-    }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
     }
 }
