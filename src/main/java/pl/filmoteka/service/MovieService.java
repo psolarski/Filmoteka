@@ -1,12 +1,18 @@
 package pl.filmoteka.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import pl.filmoteka.exception.InvalidApplicationConfigurationException;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.User;
+import pl.filmoteka.model.integration.NytCriticReview;
 import pl.filmoteka.repository.MovieRepository;
+import pl.filmoteka.repository.NytCriticReviewRepository;
 import pl.filmoteka.repository.UserRepository;
 
 import javax.transaction.Transactional;
@@ -28,7 +34,19 @@ public class MovieService {
     private UserRepository userRepository;
 
     @Autowired
-    JavaMailSenderImpl mailSender;
+    private JavaMailSenderImpl mailSender;
+
+    @Value("${api.key.nyt}")
+    private String nytApiKey;
+
+    @Value("${api.url.nyt.review}")
+    private String nytApiUrl;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private NytCriticReviewRepository nytCriticReviewRepository;
 
     @Transactional
     public Movie find(Long id) {
@@ -64,6 +82,19 @@ public class MovieService {
     }
 
     /**
+     * Znajdź wystawione przez krytyków recenzje dla wybranego filmu na podstawie jego id.
+     *
+     * @param id Numer id wybranego filmu
+     * @return Lista recenzji krytyków, przypisana do wybranego filmu
+     * @throws InvalidApplicationConfigurationException Dane połączenia z API są nieprawidłowe
+     */
+    public List<NytCriticReview> findCriticReviewsByMovieId(Long id) throws InvalidApplicationConfigurationException {
+        Movie movie = movieRepository.findOne(id);
+
+        return nytCriticReviewRepository.findByMovieName(movie.getName());
+    }
+
+    /**
      * Funkcja odpowiedzialna za wysylanie emaila do wszystkich uzytkownikow,
      * ktorzy maja dodane filmy z tego samego gatunku.
      */
@@ -91,5 +122,10 @@ public class MovieService {
                             "system, hope you will like it.");
             mailSender.send(message);
         });
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

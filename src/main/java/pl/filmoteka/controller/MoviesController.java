@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.filmoteka.exception.InvalidApplicationConfigurationException;
 import pl.filmoteka.model.Movie;
+import pl.filmoteka.model.integration.NytCriticReview;
 import pl.filmoteka.service.MovieService;
 
 import java.util.List;
@@ -64,5 +66,15 @@ public class MoviesController {
         Movie updatedEntity = movieService.updateMovie(storedMovie);
 
         return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "{id}/reviews", method = RequestMethod.GET)
+    public ResponseEntity<List<NytCriticReview>> findCriticReviewsByMovieId(@PathVariable(value = "id") Long id) {
+        try {
+            return new ResponseEntity<>(movieService.findCriticReviewsByMovieId(id), HttpStatus.OK);
+
+        } catch (InvalidApplicationConfigurationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
