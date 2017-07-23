@@ -2,9 +2,11 @@ package pl.filmoteka.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import pl.filmoteka.model.Role;
 import pl.filmoteka.model.User;
 import pl.filmoteka.repository.RoleRepository;
@@ -61,5 +63,10 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         }
 
         return role;
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

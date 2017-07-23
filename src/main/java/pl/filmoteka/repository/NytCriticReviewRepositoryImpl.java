@@ -4,7 +4,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +14,9 @@ import pl.filmoteka.model.integration.NytResponse;
 import java.net.URISyntaxException;
 import java.util.List;
 
+/**
+ * Custom repository implementation for New York Times critic's review for a movie.
+ */
 @Repository
 public class NytCriticReviewRepositoryImpl implements NytCriticReviewRepository {
 
@@ -55,10 +57,5 @@ public class NytCriticReviewRepositoryImpl implements NytCriticReviewRepository 
         }
 
         throw new InvalidApplicationConfigurationException();
-    }
-
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
     }
 }
