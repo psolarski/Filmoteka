@@ -5,9 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.exception.InvalidApplicationConfigurationException;
+import pl.filmoteka.exception.InvalidExternalApiResponseException;
+import pl.filmoteka.exception.InvalidResourceRequestedException;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.integration.NytCriticReview;
+import pl.filmoteka.model.integration.ProductList;
 import pl.filmoteka.service.MovieService;
+import pl.filmoteka.service.ProductService;
 
 import java.util.List;
 
@@ -20,6 +24,9 @@ public class MoviesController {
 
     @Autowired
     private MovieService movieService;
+
+    @Autowired
+    private ProductService productService;
 
     @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<Movie> findAll() {
@@ -75,6 +82,22 @@ public class MoviesController {
 
         } catch (InvalidApplicationConfigurationException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "{movie_id}/products", method = RequestMethod.GET)
+    public ResponseEntity<ProductList> findProductsByMovie(@PathVariable("movie_id") Long id) {
+        try {
+            return new ResponseEntity<>(productService.findProductsByMovie(id), HttpStatus.OK);
+
+        } catch (InvalidApplicationConfigurationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (InvalidResourceRequestedException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        } catch (InvalidExternalApiResponseException e) {
+            return new ResponseEntity<ProductList>(HttpStatus.FAILED_DEPENDENCY);
         }
     }
 }

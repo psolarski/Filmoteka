@@ -33,10 +33,10 @@ public class NytCriticReviewRepositoryImpl implements NytCriticReviewRepository 
     private RestTemplate restTemplate;
 
     /**
-     * Znajdź wystawione przez krytyków recenzje dla wybranego filmu na podstawie jego tytułu.
+     * Find NYTimes critics' reviews for movie with given title.
      *
-     * @param name Tytuł wybranego filmu
-     * @return Lista recenzji krytyków, przypisana do wybranego filmu
+     * @param name Name of chosen movie
+     * @return List of critics' reviews
      * @throws InvalidApplicationConfigurationException Dane połączenia z API są nieprawidłowe
      */
     @Override
