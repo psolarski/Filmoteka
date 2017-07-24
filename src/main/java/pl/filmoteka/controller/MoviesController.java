@@ -8,9 +8,11 @@ import pl.filmoteka.exception.InvalidApplicationConfigurationException;
 import pl.filmoteka.exception.InvalidExternalApiResponseException;
 import pl.filmoteka.exception.InvalidResourceRequestedException;
 import pl.filmoteka.model.Movie;
+import pl.filmoteka.model.integration.MusicAlbum;
 import pl.filmoteka.model.integration.NytCriticReview;
 import pl.filmoteka.model.integration.ProductList;
 import pl.filmoteka.service.MovieService;
+import pl.filmoteka.service.MusicAlbumService;
 import pl.filmoteka.service.ProductService;
 
 import java.util.List;
@@ -27,6 +29,9 @@ public class MoviesController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private MusicAlbumService musicAlbumService;
 
     @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<Movie> findAll() {
@@ -97,7 +102,23 @@ public class MoviesController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         } catch (InvalidExternalApiResponseException e) {
-            return new ResponseEntity<ProductList>(HttpStatus.FAILED_DEPENDENCY);
+            return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+        }
+    }
+
+    @RequestMapping(value = "{movie_id}/soundtrack", method = RequestMethod.GET)
+    public ResponseEntity<List<MusicAlbum>> findMusicAlbumByMovieId(@PathVariable("movie_id") Long id) {
+        try {
+            return new ResponseEntity<>(musicAlbumService.findMusicAlbumByMovieId(id), HttpStatus.OK);
+
+        } catch (InvalidResourceRequestedException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        } catch (InvalidExternalApiResponseException e) {
+            return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
+
+        } catch (InvalidApplicationConfigurationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
