@@ -30,6 +30,14 @@ public class Rating {
     @Max(10)
     private int evaluation;
 
+    public Rating(Movie movie, int evaluation) {
+        this.movie = movie;
+        this.evaluation = evaluation;
+    }
+
+    public Rating() {
+    }
+
     public int getEvaluation() {
         return evaluation;
     }
@@ -50,5 +58,12 @@ public class Rating {
         return new HashCodeBuilder().append(id)
                 .append(evaluation)
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Rating{" +
+                "evaluation = " + evaluation +
+                '}';
     }
 }

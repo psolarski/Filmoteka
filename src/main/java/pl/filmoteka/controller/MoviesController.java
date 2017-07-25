@@ -97,7 +97,12 @@ public class MoviesController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         } catch (InvalidExternalApiResponseException e) {
-            return new ResponseEntity<ProductList>(HttpStatus.FAILED_DEPENDENCY);
+            return new ResponseEntity<>(HttpStatus.FAILED_DEPENDENCY);
         }
+    }
+
+    @RequestMapping(value = "rating/{filmLimit}", method = RequestMethod.GET)
+    public ResponseEntity<List<Movie>> findNRatedMovies(@PathVariable("filmLimit") int filmLimit) {
+        return new ResponseEntity<>(movieService.findNBestRatedMovies(filmLimit), HttpStatus.OK);
     }
 }

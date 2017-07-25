@@ -3,13 +3,16 @@ package pl.filmoteka.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -34,6 +37,8 @@ public class Movie {
     @Column
     private String genre;
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     @Column
     private LocalDate releaseDate;
 
@@ -56,7 +61,8 @@ public class Movie {
     private Director director;
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = Rating.class, mappedBy = "movie",
-                                                                    cascade = CascadeType.REMOVE)
+                                                                    cascade = {CascadeType.REMOVE,
+                                                                               CascadeType.PERSIST})
     private Set<Rating> ratings = new HashSet<>();
 
     public Movie() {
@@ -138,6 +144,14 @@ public class Movie {
         this.director = director;
     }
 
+    public Set<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
     public int hashCode() {
         return new HashCodeBuilder().append(id)
                 .append(name)
@@ -147,5 +161,20 @@ public class Movie {
 
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "name='" + name + '\'' +
+                ", duration=" + duration +
+                ", genre='" + genre + '\'' +
+                ", releaseDate=" + releaseDate +
+                ", language='" + language + '\'' +
+                ", actors=" + actors +
+                ", users=" + users +
+                ", director=" + director +
+                ", ratings=" + ratings +
+                '}';
     }
 }
