@@ -1,10 +1,15 @@
 package pl.filmoteka.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import pl.filmoteka.exception.InvalidApplicationConfigurationException;
+import pl.filmoteka.exception.InvalidResourceRequestedException;
 import pl.filmoteka.model.Role;
+import pl.filmoteka.model.SimilarityDegree;
 import pl.filmoteka.model.User;
 import pl.filmoteka.service.RoleService;
 import pl.filmoteka.service.UserService;
@@ -17,6 +22,9 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/users/")
 public class UsersController {
+
+    // Logger
+    final static Logger logger = Logger.getLogger(UsersController.class);
 
     @Autowired
     private UserService userService;
@@ -85,5 +93,59 @@ public class UsersController {
         User updatedEntity = userService.updateUser(user);
 
         return new ResponseEntity<>(updatedEntity, HttpStatus.OK);
+    }
+
+    /**
+     * Calculate degree of similarity between two users based on their watched movies list.
+     *
+     * @param otherUserId ID of chosen user to be compared to
+     * @return Similarity degree between two users
+     */
+    @RequestMapping(value = "similarity/{other_user_id}", method = RequestMethod.GET)
+    public ResponseEntity<SimilarityDegree> specifySimilarityDegreeBasedOnWatchedMovies(
+            @PathVariable("other_user_id") Long otherUserId) {
+        String loggedUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        try {
+            return new ResponseEntity<>(
+                    userService.specifySimilarityDegreeBasedOnWatchedMovies(loggedUsername, otherUserId),
+                    HttpStatus.OK
+            );
+
+        } catch (InvalidApplicationConfigurationException e) {
+            logger.error("Invalid logged in user", e);
+
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (InvalidResourceRequestedException e) {
+            logger.error(e);
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Add chosen movie to user's watched movies list.
+     *
+     * @param id Chosen movie's ID
+     * @return Response with updated user information
+     */
+    @RequestMapping(value = "{movie_id}/watched", method = RequestMethod.GET)
+    public ResponseEntity<User> addMovieToWatched(@PathVariable("movie_id") Long id) {
+        String loggedUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        try {
+            return new ResponseEntity<>(userService.addMovieToWatched(loggedUsername, id), HttpStatus.OK);
+
+        } catch (InvalidApplicationConfigurationException e) {
+            logger.error("Invalid logged in user", e);
+
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (InvalidResourceRequestedException e) {
+            logger.error(e);
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -136,6 +136,10 @@ public class Movie {
         this.users = users;
     }
 
+    public void addUserThatWatchedMovie(User user) {
+        this.users.add(user);
+    }
+
     public Director getDirector() {
         return director;
     }
