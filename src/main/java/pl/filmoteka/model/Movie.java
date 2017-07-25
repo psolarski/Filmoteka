@@ -9,7 +9,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -128,6 +127,10 @@ public class Movie {
 
     public void setUsers(Set<User> users) {
         this.users = users;
+    }
+
+    public void addUserThatWatchedMovie(User user) {
+        this.users.add(user);
     }
 
     public Director getDirector() {

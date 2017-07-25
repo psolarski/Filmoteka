@@ -151,6 +151,10 @@ public class User implements UserDetails {
         this.movies = movies;
     }
 
+    public void addMovieToWatched(Movie movie) {
+        movies.add(movie);
+    }
+
     public int hashCode() {
         return new HashCodeBuilder().append(id)
                 .append(username)
