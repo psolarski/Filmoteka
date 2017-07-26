@@ -1,8 +1,6 @@
 package pl.filmoteka.repository;
 
-
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -15,6 +13,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Custom repository implementation for cinema.
@@ -23,7 +22,7 @@ import java.util.Set;
 public class CinemaRepositoryImpl implements CinemaRepository {
 
     // Logger
-    final static Logger logger = Logger.getLogger(CinemaRepositoryImpl.class);
+    final static Logger logger = Logger.getLogger(CinemaRepositoryImpl.class.getName());
 
     @Autowired
     private RestTemplate restTemplate;
@@ -46,10 +45,10 @@ public class CinemaRepositoryImpl implements CinemaRepository {
             return new HashSet<>(Arrays.asList(restTemplate.getForObject(uri.build(), Cinema[].class)));
 
         } catch (URISyntaxException e) {
-            logger.error("Invalid URI", e);
+            logger.severe("Invalid URI");
 
         } catch (HttpClientErrorException e) {
-            logger.error("Connection error", e);
+            logger.severe("Connection error");
         }
 
         throw new InvalidApplicationConfigurationException();

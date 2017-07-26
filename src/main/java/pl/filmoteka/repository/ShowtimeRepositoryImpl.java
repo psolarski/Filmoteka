@@ -1,7 +1,6 @@
 package pl.filmoteka.repository;
 
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -13,6 +12,7 @@ import pl.filmoteka.model.integration.Showtime;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Custom repository implementation for show times.
@@ -21,7 +21,7 @@ import java.util.List;
 public class ShowtimeRepositoryImpl implements ShowtimeRepository {
 
     // Logger
-    final static Logger logger = Logger.getLogger(CinemaRepositoryImpl.class);
+    final static Logger logger = Logger.getLogger(CinemaRepositoryImpl.class.getName());
 
     @Autowired
     private RestTemplate restTemplate;
@@ -44,10 +44,10 @@ public class ShowtimeRepositoryImpl implements ShowtimeRepository {
             return Arrays.asList(restTemplate.getForObject(uri.build(), Showtime[].class));
 
         } catch (URISyntaxException e) {
-            logger.error("Invalid URI", e);
+            logger.severe("Invalid URI");
 
         } catch (HttpClientErrorException e) {
-            logger.error("Connection error", e);
+            logger.severe("Connection error");
         }
 
         throw new InvalidApplicationConfigurationException();

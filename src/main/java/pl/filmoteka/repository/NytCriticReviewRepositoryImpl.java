@@ -1,7 +1,6 @@
 package pl.filmoteka.repository;
 
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -13,6 +12,7 @@ import pl.filmoteka.model.integration.NytResponse;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Custom repository implementation for New York Times critic's review for a movie.
@@ -21,7 +21,7 @@ import java.util.List;
 public class NytCriticReviewRepositoryImpl implements NytCriticReviewRepository {
 
     // Logger
-    final static Logger logger = Logger.getLogger(NytCriticReviewRepositoryImpl.class);
+    final static Logger logger = Logger.getLogger(NytCriticReviewRepositoryImpl.class.getName());
 
     @Value("${api.key.nyt}")
     private String nytApiKey;
@@ -50,10 +50,10 @@ public class NytCriticReviewRepositoryImpl implements NytCriticReviewRepository 
             return response.getReviews();
 
         } catch (URISyntaxException e) {
-            logger.error("Invalid URI", e);
+            logger.severe("Invalid URI");
 
         } catch (HttpClientErrorException e) {
-            logger.error("Connection error", e);
+            logger.severe("Connection error");
         }
 
         throw new InvalidApplicationConfigurationException();

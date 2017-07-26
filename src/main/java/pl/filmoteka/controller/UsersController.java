@@ -1,6 +1,5 @@
 package pl.filmoteka.controller;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,7 @@ import pl.filmoteka.service.RoleService;
 import pl.filmoteka.service.UserService;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Controller for user management.
@@ -24,7 +24,7 @@ import java.util.List;
 public class UsersController {
 
     // Logger
-    final static Logger logger = Logger.getLogger(UsersController.class);
+    final static Logger logger = Logger.getLogger(UsersController.class.getName());
 
     @Autowired
     private UserService userService;
@@ -113,12 +113,12 @@ public class UsersController {
             );
 
         } catch (InvalidApplicationConfigurationException e) {
-            logger.error("Invalid logged in user", e);
+            logger.severe("Invalid logged in user");
 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (InvalidResourceRequestedException e) {
-            logger.error(e);
+            logger.severe("There's no user with requested ID");
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -138,12 +138,12 @@ public class UsersController {
             return new ResponseEntity<>(userService.addMovieToWatched(loggedUsername, id), HttpStatus.OK);
 
         } catch (InvalidApplicationConfigurationException e) {
-            logger.error("Invalid logged in user", e);
+            logger.severe("Invalid logged in user");
 
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
         } catch (InvalidResourceRequestedException e) {
-            logger.error(e);
+            logger.severe("There's no user with requested ID");
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

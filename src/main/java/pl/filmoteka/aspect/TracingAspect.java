@@ -4,12 +4,11 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pl.filmoteka.model.Actor;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by Piotr on 15.04.2017.
@@ -18,7 +17,7 @@ import java.util.List;
 @Component
 public class TracingAspect {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static Logger logger = Logger.getLogger(TracingAspect.class.getName());
 
     @Before("pl.filmoteka.aspect.FilmotekaPointcuts.anyControllerBean()")
     public void beforeAnyControllerMethod(JoinPoint joinPoint) {

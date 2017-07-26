@@ -1,7 +1,6 @@
 package pl.filmoteka.repository;
 
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -21,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Custom repository implementation for music album.
@@ -30,7 +30,7 @@ import java.util.List;
 public class MusicAlbumRepositoryImpl implements MusicAlbumRepository {
 
     // Logger
-    final static Logger logger = Logger.getLogger(MusicAlbumRepositoryImpl.class);
+    final static Logger logger = Logger.getLogger(MusicAlbumRepositoryImpl.class.getName());
 
     // Spotify API Token expiration date
     private static LocalDateTime TOKEN_EXPIRES_ON = LocalDateTime.now();
@@ -94,13 +94,13 @@ public class MusicAlbumRepositoryImpl implements MusicAlbumRepository {
             return new SpotifySearchAlbumMapper().from(responseAlbums.getBody());
 
         } catch (URISyntaxException e) {
-            logger.error("Invalid URI", e);
+            logger.severe("Invalid URI");
 
         } catch (HttpClientErrorException e) {
-            logger.error("Connection error", e);
+            logger.severe("Connection error");
 
         } catch (UnsupportedEncodingException e) {
-            logger.error("Invalid encoding", e);
+            logger.severe("Invalid encoding");
         }
 
         throw new InvalidApplicationConfigurationException();

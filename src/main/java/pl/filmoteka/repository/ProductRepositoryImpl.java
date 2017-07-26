@@ -1,7 +1,6 @@
 package pl.filmoteka.repository;
 
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -15,6 +14,7 @@ import pl.filmoteka.util.EbaySearchResponseMapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.logging.Logger;
 
 /**
  * Custom repository implementation for product from Ebay.
@@ -23,7 +23,7 @@ import java.net.URLEncoder;
 public class ProductRepositoryImpl implements ProductRepository {
 
     // Logger
-    final static Logger logger = Logger.getLogger(ProductRepositoryImpl.class);
+    final static Logger logger = Logger.getLogger(ProductRepositoryImpl.class.getName());
 
     @Value("${api.ebay.securityappname}")
     private String ebaySecurityAppname;
@@ -65,13 +65,13 @@ public class ProductRepositoryImpl implements ProductRepository {
             return mapper.from(rawResponse);
 
         } catch (URISyntaxException e) {
-            logger.error("Invalid URI", e);
+            logger.severe("Invalid URI");
 
         } catch (HttpClientErrorException e) {
-            logger.error("Connection error", e);
+            logger.severe("Connection error");
 
         } catch (UnsupportedEncodingException e) {
-            logger.error("Invalid encoding", e);
+            logger.severe("Invalid encoding");
         }
 
         throw new InvalidApplicationConfigurationException();

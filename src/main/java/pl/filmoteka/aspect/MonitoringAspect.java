@@ -3,12 +3,10 @@ package pl.filmoteka.aspect;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
-import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Created by Piotr on 15.04.2017.
@@ -17,7 +15,7 @@ import java.util.Objects;
 @Component
 public class MonitoringAspect {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static Logger logger = Logger.getLogger(MonitoringAspect.class.getName());
 
     @Around("pl.filmoteka.aspect.FilmotekaPointcuts.monitored()")
     public Object monitor(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
