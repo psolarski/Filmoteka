@@ -13,6 +13,7 @@ import pl.filmoteka.repository.NytCriticReviewRepository;
 import pl.filmoteka.repository.UserRepository;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -80,6 +81,25 @@ public class MovieService {
         Movie movie = movieRepository.findOne(id);
 
         return nytCriticReviewRepository.findByMovieName(movie.getName());
+    }
+
+    /**
+     * Zwróć N najlepiej ocenianych filmów na podstawie ratingu.
+     *
+     * @param filmLimit liczba filmów, jak ma być zwrócona.
+     */
+    @Transactional
+    public List<Movie> findNBestRatedMovies(int filmLimit) {
+        List<Movie> bestRatedMovies = movieRepository.findAll()
+                                                     .stream()
+                                                     .sorted(Comparator.comparing(
+                                                             movies -> movies.getRatings()
+                                                             .stream()
+                                                             .mapToInt(movie -> movie.getEvaluation())
+                                                             .sum())
+                                                     ).limit(filmLimit)
+                                         .collect(Collectors.toList());
+        return bestRatedMovies;
     }
 
     /**

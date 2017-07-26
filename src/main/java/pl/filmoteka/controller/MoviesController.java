@@ -121,4 +121,9 @@ public class MoviesController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "rating/{filmLimit}", method = RequestMethod.GET)
+    public ResponseEntity<List<Movie>> findNRatedMovies(@PathVariable("filmLimit") int filmLimit) {
+        return new ResponseEntity<>(movieService.findNBestRatedMovies(filmLimit), HttpStatus.OK);
+    }
 }
