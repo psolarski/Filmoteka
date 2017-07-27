@@ -1,5 +1,6 @@
 package pl.filmoteka.jmx;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
@@ -10,6 +11,7 @@ import java.lang.management.ManagementFactory;
 
 @Configuration
 @EnableMBeanExport
+@ConditionalOnProperty(prefix = "spring.jmx.", value = "enabled", havingValue = "true", matchIfMissing = true)
 public class JmxMain {
 
     @Bean
