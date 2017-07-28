@@ -3,6 +3,7 @@ package pl.filmoteka.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import pl.filmoteka.exception.InvalidApplicationConfigurationException;
 import pl.filmoteka.exception.InvalidExternalApiResponseException;
@@ -11,11 +12,13 @@ import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.integration.MusicAlbum;
 import pl.filmoteka.model.integration.NytCriticReview;
 import pl.filmoteka.model.integration.ProductList;
+import pl.filmoteka.service.MovieRecommenderService;
 import pl.filmoteka.service.MovieService;
 import pl.filmoteka.service.MusicAlbumService;
 import pl.filmoteka.service.ProductService;
 
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * Created by Piotr on 15.04.2017.
@@ -32,6 +35,9 @@ public class MoviesController {
 
     @Autowired
     private MusicAlbumService musicAlbumService;
+
+    @Autowired
+    private MovieRecommenderService movieRecommenderService;
 
     @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<Movie> findAll() {
@@ -125,5 +131,17 @@ public class MoviesController {
     @RequestMapping(value = "rating/{filmLimit}", method = RequestMethod.GET)
     public ResponseEntity<List<Movie>> findNRatedMovies(@PathVariable("filmLimit") int filmLimit) {
         return new ResponseEntity<>(movieService.findNBestRatedMovies(filmLimit), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "recommendations", method = RequestMethod.GET)
+    public ResponseEntity<SortedSet<Movie>> recommendMovies() {
+        String loggedUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        try {
+            return new ResponseEntity(movieRecommenderService.getRecommendations(loggedUsername), HttpStatus.OK);
+
+        } catch (InvalidApplicationConfigurationException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
