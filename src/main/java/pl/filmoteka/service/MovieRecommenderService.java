@@ -29,7 +29,7 @@ public class MovieRecommenderService {
     private User loggedUser;
     private Set<String> mostWatchedGenres = new HashSet<>();
     private Map<String, Integer> watchedMovieGenres = new HashMap<>();
-    private SortedSet<Movie> recommendedMovies = new TreeSet<>(new MovieReleaseDateComparator());
+    private List<Movie> recommendedMovies = new ArrayList<>();
 
     /**
      * Provide movie recommendations for logged user based on watched movies.
@@ -39,14 +39,12 @@ public class MovieRecommenderService {
      * @throws InvalidApplicationConfigurationException Requested other user doesn't exist
      */
     @Transactional
-    public Set<Movie> getRecommendations(String username) throws InvalidApplicationConfigurationException {
+    public List<Movie> getRecommendations(String username) throws InvalidApplicationConfigurationException {
         loggedUser = userService.findByUsername(username);
 
         if (loggedUser == null) {
             throw new InvalidApplicationConfigurationException();
         }
-
-        Set<Movie> recommendedMovies = new HashSet<>();
 
         selectMostWatchedGenres();
         populateRecommendedMoviesCollectionWithLimit();
@@ -85,7 +83,9 @@ public class MovieRecommenderService {
         mostWatchedGenres.forEach(genre -> movieService.findByGenre(genre)
                 .forEach(movie -> recommendedMovies.add(movie))
         );
-        mostWatchedGenres.stream().limit(movieRecommendationsLimit);
+
+        recommendedMovies.sort(new MovieReleaseDateComparator());
+        recommendedMovies = recommendedMovies.subList(0, movieRecommendationsLimit);
     }
 
     private void removeAlreadyWatchedMoviesFromRecommendations() {

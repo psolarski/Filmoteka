@@ -18,7 +18,6 @@ import pl.filmoteka.service.MusicAlbumService;
 import pl.filmoteka.service.ProductService;
 
 import java.util.List;
-import java.util.SortedSet;
 
 /**
  * Created by Piotr on 15.04.2017.
@@ -134,7 +133,7 @@ public class MoviesController {
     }
 
     @RequestMapping(value = "recommendations", method = RequestMethod.GET)
-    public ResponseEntity<SortedSet<Movie>> recommendMovies() {
+    public ResponseEntity<List<Movie>> recommendMovies() {
         String loggedUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         try {
