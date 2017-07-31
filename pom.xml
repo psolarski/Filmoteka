@@ -101,6 +101,11 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.3</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>16.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -109,6 +114,12 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-assembly-plugin</artifactId>
+		        <configuration>
+		        </configuration>
+    		</plugin>
 		</plugins>
 	</build>
 

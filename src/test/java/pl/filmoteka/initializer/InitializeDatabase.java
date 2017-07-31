@@ -3,14 +3,9 @@ package pl.filmoteka.initializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import pl.filmoteka.model.Actor;
-import pl.filmoteka.model.Director;
-import pl.filmoteka.model.Movie;
-import pl.filmoteka.model.User;
-import pl.filmoteka.repository.ActorRepository;
-import pl.filmoteka.repository.DirectorRepository;
-import pl.filmoteka.repository.MovieRepository;
-import pl.filmoteka.repository.UserRepository;
+import pl.filmoteka.model.*;
+import pl.filmoteka.repository.*;
+import pl.filmoteka.service.UserService;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
@@ -37,13 +32,16 @@ public class InitializeDatabase {
     private ActorRepository actorRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private MovieRepository movieRepository;
 
     @Autowired
     private DirectorRepository directorRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @PostConstruct
     public void initialize() {
@@ -53,10 +51,24 @@ public class InitializeDatabase {
             actorRepository.saveAndFlush(actor);
         }
 
+        // Roles
+        Role adminRole = new Role("ADMIN");
+        Role userRole = new Role("USER");
+        roleRepository.saveAndFlush(adminRole);
+        roleRepository.saveAndFlush(userRole);
+
         // Users
+        User adminUser = new User("admin", "password", "admin@user.20ak3e");
+        User normalUser = new User("user", "password", "user@user.20ak3e");
+        adminUser.assignRole(adminRole);
+        adminUser.assignRole(userRole);
+        normalUser.assignRole(userRole);
+        userService.createUser(adminUser);
+        userService.createUser(normalUser);
+
         for (int i = 0; i < usersSize; i++) {
             User user = new User("username" + i, "password", "doo" + i + "@bee.doo");
-            userRepository.saveAndFlush(user);
+            userService.createUser(user);
         }
 
         // Movies

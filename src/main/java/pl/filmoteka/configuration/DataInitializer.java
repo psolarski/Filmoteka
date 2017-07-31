@@ -1,68 +1,69 @@
 package pl.filmoteka.configuration;
 
+import com.google.common.io.Resources;
+import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import pl.filmoteka.model.Role;
 import pl.filmoteka.model.User;
-import pl.filmoteka.repository.RoleRepository;
-import pl.filmoteka.repository.UserRepository;
-import pl.filmoteka.util.PasswordEncoderProvider;
+import pl.filmoteka.service.UserService;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.logging.Logger;
 
 @Component
 public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
-    boolean alreadySetup = false;
+	// Logger
+	final static Logger logger = Logger.getLogger(DataInitializer.class.getName());
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserService userService;
+	
+	@Value("${spring.datasource.url}")
+	private String dataSourceUrl;
+	
+	@Value("${spring.datasource.username}")
+	private String dataSourceUsername;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoderProvider passwordEncoderProvider;
+	@Value("${spring.datasource.password}")
+	private String dataSourcePassword;
+	
+	@Value(value = "classpath:db_initializer.sql")
+	private Resource resource;
 
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        if (alreadySetup)
-            return;
-
-        Role adminRole = createRoleIfNotFound("ADMIN");
-        Role userRole = createRoleIfNotFound("USER");
-
-        roleRepository.saveAndFlush(adminRole);
-        roleRepository.saveAndFlush(userRole);
-
-        String password = passwordEncoderProvider.getEncoder().encode("password");
-        User adminUser = new User("admin", password, "admin@admin.admin");
-        adminUser.assignRole(adminRole);
-        adminUser.assignRole(userRole);
-
-        User normalUser = new User("user", password, "user@user.user");
-        normalUser.assignRole(userRole);
-
-        userRepository.saveAndFlush(adminUser);
-        userRepository.saveAndFlush(normalUser);
-
-        alreadySetup = true;
-    }
-
-    @Transactional
-    private Role createRoleIfNotFound(String name) {
-        Role role = roleRepository.findByName(name);
-
-        if (role == null) {
-            role = new Role(name);
-            role = roleRepository.saveAndFlush(role);
-        }
-
-        return role;
+    	User adminUser = userService.findByUsername("admin");
+    	
+    	if (adminUser == null) {
+    		try {
+    			String fileContent = Resources.toString(resource.getURL(), Charsets.toCharset("UTF-8"));
+    			
+				Connection connection = DriverManager.getConnection(dataSourceUrl, dataSourceUsername, dataSourcePassword);
+				ScriptUtils.executeSqlScript(connection, new ByteArrayResource(fileContent.getBytes()));
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+				logger.severe("A SQL Exception occurred while initializing database with artificial data");
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				logger.severe("The Application was unable to read prepared sql file");
+			} 
+    	}
     }
 
     @Bean

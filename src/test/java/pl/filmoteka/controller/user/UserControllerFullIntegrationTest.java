@@ -79,7 +79,7 @@ public class UserControllerFullIntegrationTest {
 
     @Test
     public void deleteUser() {
-        testRestTemplate.withBasicAuth("admin", "password").delete("/api/v1/users/delete?id=1");
+        testRestTemplate.withBasicAuth("admin", "password").delete("/api/v1/users/delete?id=3");
 
         ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
                 .getForEntity("/api/v1/users/all", String.class);
