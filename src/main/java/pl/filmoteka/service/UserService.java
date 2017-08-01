@@ -100,33 +100,4 @@ public class UserService {
 
         return degree;
     }
-
-    /**
-     * Add chosen movie to user's watched movies list.
-     *
-     * @param username Logged user name
-     * @param movieId Chosen movie's ID
-     * @return User with updated information
-     * @throws InvalidApplicationConfigurationException No user was found with logged user name
-     * @throws InvalidResourceRequestedException Requested movie doesn't exist
-     */
-    @Transactional
-    public User addMovieToWatched(String username, Long movieId)
-            throws InvalidApplicationConfigurationException, InvalidResourceRequestedException {
-        Movie movie = movieRepository.findOne(movieId);
-
-        if (movie == null) {
-            throw new InvalidResourceRequestedException("There\'s no movie with id " + movieId);
-        }
-
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new InvalidApplicationConfigurationException();
-        }
-        user.addMovieToWatched(movie);
-        movie.addUserThatWatchedMovie(user);
-
-        return userRepository.saveAndFlush(user);
-    }
 }

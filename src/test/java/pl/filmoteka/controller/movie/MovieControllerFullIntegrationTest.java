@@ -1,6 +1,7 @@
 package pl.filmoteka.controller.movie;
 
 import com.jayway.restassured.path.json.JsonPath;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.Rating;
+import pl.filmoteka.repository.DirectorRepository;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,8 +36,25 @@ public class MovieControllerFullIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
+    @Autowired
+    private DirectorRepository directorRepository;
+
     @Value("${best.rated.movie.limit}")
     private int filmLimit;
+
+    private Director director;
+
+    @Before
+    public void init() {
+        if (director == null) {
+            director = new Director(
+                    "MovieControllerFullIntegrationTestDirector",
+                    "surname",
+                    "someNationality"
+            );
+            director = directorRepository.saveAndFlush(director);
+        }
+    }
 
     @Test
     public void getAllMovies() {
@@ -82,7 +103,7 @@ public class MovieControllerFullIntegrationTest {
                 LocalDate.now(),
                 "Polish"
         );
-        movie.setDirector(new Director("Katherine", "Travolta", "American"));
+        movie.setDirector(director);
 
         ResponseEntity<Movie> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
                 .postForEntity("/api/v1/movies/create", movie, Movie.class);
@@ -100,7 +121,7 @@ public class MovieControllerFullIntegrationTest {
                 LocalDate.now(),
                 "Polish"
         );
-        movie.setDirector(new Director("John", "Troy", "American"));
+        movie.setDirector(director);
 
         ResponseEntity<Movie> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
                 .postForEntity("/api/v1/movies/create", movie, Movie.class);
@@ -131,7 +152,7 @@ public class MovieControllerFullIntegrationTest {
                 LocalDate.now(),
                 "Polish"
         );
-        movie.setDirector(new Director("John", "Troy", "American"));
+        movie.setDirector(director);
 
         ResponseEntity<Movie> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
                 .postForEntity("/api/v1/movies/create", movie, Movie.class);
@@ -178,9 +199,7 @@ public class MovieControllerFullIntegrationTest {
                     "MovieTestGenreForRating" + i,
                     LocalDate.now().minusWeeks(i * 2),
                     "English");
-            movie.setDirector(new Director("DirectorTestNameForRating" + i,
-                    "DirectorTestSurnameForRating" + i,
-                    "American"));
+            movie.setDirector(director);
 
             Set<Rating> ratings = new HashSet<>();
             ratings.add(new Rating(movie, i));

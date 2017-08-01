@@ -123,29 +123,4 @@ public class UsersController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-    /**
-     * Add chosen movie to user's watched movies list.
-     *
-     * @param id Chosen movie's ID
-     * @return Response with updated user information
-     */
-    @RequestMapping(value = "{movie_id}/watched", method = RequestMethod.GET)
-    public ResponseEntity<User> addMovieToWatched(@PathVariable("movie_id") Long id) {
-        String loggedUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        try {
-            return new ResponseEntity<>(userService.addMovieToWatched(loggedUsername, id), HttpStatus.OK);
-
-        } catch (InvalidApplicationConfigurationException e) {
-            logger.severe("Invalid logged in user");
-
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        } catch (InvalidResourceRequestedException e) {
-            logger.severe("There's no user with requested ID");
-
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
 }

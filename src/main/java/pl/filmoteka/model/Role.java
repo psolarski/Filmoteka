@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Entity that represents a user role.
+ */
 @Entity
 public class Role {
 

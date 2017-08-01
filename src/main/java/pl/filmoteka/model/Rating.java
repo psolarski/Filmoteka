@@ -10,7 +10,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 /**
- * Entity that represents Rating
+ * Entity that represents a movie rating.
  */
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -22,7 +22,7 @@ public class Rating {
     @Column(name = "rating_id", nullable = false, updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id", nullable = false)
     private Movie movie;
 

@@ -5,12 +5,13 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import pl.filmoteka.exception.InvalidApplicationConfigurationException;
+import pl.filmoteka.exception.InvalidResourceRequestedException;
+import pl.filmoteka.model.Actor;
+import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.User;
 import pl.filmoteka.model.integration.NytCriticReview;
-import pl.filmoteka.repository.MovieRepository;
-import pl.filmoteka.repository.NytCriticReviewRepository;
-import pl.filmoteka.repository.UserRepository;
+import pl.filmoteka.repository.*;
 
 import javax.transaction.Transactional;
 import java.util.Comparator;
@@ -27,6 +28,12 @@ public class MovieService {
 
     @Autowired
     private MovieRepository movieRepository;
+
+    @Autowired
+    private ActorRepository actorRepository;
+
+    @Autowired
+    private DirectorRepository directorRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -100,6 +107,73 @@ public class MovieService {
                                                      ).limit(filmLimit)
                                          .collect(Collectors.toList());
         return bestRatedMovies;
+    }
+
+    /**
+     * Add chosen movie to user's watched movies list.
+     *
+     * @param username Logged user name
+     * @param movieId Chosen movie's ID
+     * @return User with updated information
+     * @throws InvalidApplicationConfigurationException No user was found with logged user name
+     * @throws InvalidResourceRequestedException Requested movie doesn't exist
+     */
+    @Transactional
+    public User addMovieToWatched(String username, Long movieId)
+            throws InvalidApplicationConfigurationException, InvalidResourceRequestedException {
+        Movie movie = movieRepository.findOne(movieId);
+
+        if (movie == null) {
+            throw new InvalidResourceRequestedException("There\'s no movie with id " + movieId);
+        }
+
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            throw new InvalidApplicationConfigurationException();
+        }
+        user.addMovieToWatched(movie);
+        movie.addUserThatWatchedMovie(user);
+
+        return userRepository.saveAndFlush(user);
+    }
+
+    @Transactional
+    public Movie assignActorToMovie(Long movieId, Long actorId) throws InvalidResourceRequestedException {
+        Movie movie = movieRepository.findOne(movieId);
+
+        if (movie == null) {
+            throw new InvalidResourceRequestedException("There\'s no movie with id " + movieId);
+        }
+
+        Actor actor = actorRepository.findOne(actorId);
+
+        if (actor == null) {
+            throw new InvalidResourceRequestedException("There\'s no actor with id " + movieId);
+        }
+
+        movie.assignActor(actor);
+
+        return movieRepository.saveAndFlush(movie);
+    }
+
+    @Transactional
+    public Movie assignDirectorToMovie(Long movieId, Long directorId) throws InvalidResourceRequestedException {
+        Movie movie = movieRepository.findOne(movieId);
+
+        if (movie == null) {
+            throw new InvalidResourceRequestedException("There\'s no movie with id " + movieId);
+        }
+
+        Director director = directorRepository.findOne(directorId);
+
+        if (director == null) {
+            throw new InvalidResourceRequestedException("There\'s no actor with id " + movieId);
+        }
+
+        movie.assignDirector(director);
+
+        return movieRepository.saveAndFlush(movie);
     }
 
     /**

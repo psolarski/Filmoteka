@@ -45,7 +45,7 @@ public class Movie {
     @Column
     private String language;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Actor.class, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Actor.class)
     @JoinTable(
             name = "movie_actor",
             joinColumns = {@JoinColumn(name = "movie_id", nullable = false, updatable = false)},
@@ -56,7 +56,7 @@ public class Movie {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class, mappedBy = "movies")
     private Set<User> users = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "director_id", nullable = false)
     private Director director;
 
@@ -120,6 +120,10 @@ public class Movie {
         this.language = language;
     }
 
+    public void assignActor(Actor actor) {
+        this.actors.add(actor);
+    }
+
     public Set<Actor> getActors() {
         return actors;
     }
@@ -138,6 +142,10 @@ public class Movie {
 
     public void addUserThatWatchedMovie(User user) {
         this.users.add(user);
+    }
+
+    public void assignDirector(Director director) {
+        this.director = director;
     }
 
     public Director getDirector() {

@@ -1,5 +1,6 @@
 package pl.filmoteka.repository.movie;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
+import pl.filmoteka.repository.DirectorRepository;
 import pl.filmoteka.repository.MovieRepository;
 
 import java.time.LocalDate;
@@ -25,6 +27,19 @@ public class MovieRepositoryMethodTests {
     @Autowired
     private MovieRepository movieRepository;
 
+    @Autowired
+    private DirectorRepository directorRepository;
+
+    private Director director;
+
+    @Before
+    public void init() {
+        if (director == null) {
+            director = new Director("MovieRepositoryTestDirector", "surname", "nationality");
+            director = directorRepository.saveAndFlush(director);
+        }
+    }
+
     @Test
     @Rollback
     public void testFindByName() {
@@ -33,7 +48,7 @@ public class MovieRepositoryMethodTests {
                                 "testGenre",
                                 LocalDate.now(),
                                 "polish");
-        movie.setDirector(new Director("name", "surname", "American"));
+        movie.setDirector(director);
         movieRepository.saveAndFlush(movie);
 
         List<Movie> movieList = movieRepository.findByName("TestMovie");
@@ -50,7 +65,7 @@ public class MovieRepositoryMethodTests {
                 "testGenre",
                 LocalDate.now(),
                 "polish");
-        movie.setDirector(new Director("name", "surname", "American"));
+        movie.setDirector(director);
         movieRepository.saveAndFlush(movie);
 
         List<Movie> movieList = movieRepository.findByGenre("testGenre");

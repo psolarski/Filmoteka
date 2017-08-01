@@ -56,7 +56,7 @@ public class User implements UserDetails {
     private Set<Role> roles = new HashSet<>();
 
     // List of movies that the user has watched
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Movie.class, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Movie.class)
     @JoinTable(
             name = "watched_movies",
             joinColumns ={@JoinColumn(name = "user_id", nullable = false, updatable = false)},
@@ -133,10 +133,6 @@ public class User implements UserDetails {
 
     public Set<Role> getRoles() {
         return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
     }
 
     public void assignRole(Role role) {

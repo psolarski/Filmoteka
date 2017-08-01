@@ -1,6 +1,7 @@
 package pl.filmoteka.security;
 
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import pl.filmoteka.model.Actor;
 import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.Role;
+import pl.filmoteka.repository.DirectorRepository;
 
 import java.time.LocalDate;
 
@@ -23,6 +25,19 @@ public class WebSecurityActorControllerTests {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
+
+    @Autowired
+    private DirectorRepository directorRepository;
+
+    private Director director;
+
+    @Before
+    public void init() {
+        if (director == null) {
+            director = new Director("MovieRepositoryTestDirector", "surname", "nationality");
+            director = directorRepository.saveAndFlush(director);
+        }
+    }
 
     // ActorController - get all actors
     @Test
@@ -575,7 +590,6 @@ public class WebSecurityActorControllerTests {
     @Test
     public void ensureThatGuestIsNotAbleToCreateMovie() {
         Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
-        Director director = new Director("Test", "test", "test");
         movie.setDirector(director);
 
         ResponseEntity<Movie> response = testRestTemplate.
@@ -587,7 +601,6 @@ public class WebSecurityActorControllerTests {
     @Test
     public void ensureThatUserIsNotAbleToCreateMovie() {
         Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
-        Director director = new Director("Test", "test", "test");
         movie.setDirector(director);
 
         ResponseEntity<Movie> response = testRestTemplate.
@@ -600,7 +613,6 @@ public class WebSecurityActorControllerTests {
     @Test
     public void ensureThatAdminIsAbleToCreateNewMovie() {
         Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
-        Director director = new Director("Test", "test", "test");
         movie.setDirector(director);
 
         ResponseEntity<Movie> response = testRestTemplate.
@@ -631,7 +643,6 @@ public class WebSecurityActorControllerTests {
     @Test
     public void ensureThatAdminIsAbleToDeleteMovie() {
         Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
-        Director director = new Director("Test", "test", "test");
         movie.setDirector(director);
 
         ResponseEntity<Movie> response = testRestTemplate.
@@ -651,7 +662,6 @@ public class WebSecurityActorControllerTests {
     @Test
     public void ensureThatGuestIsNotAbleToUpdateMovie() {
         Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
-        Director director = new Director("Test", "test", "test");
         movie.setDirector(director);
 
         ResponseEntity<Movie> response = testRestTemplate.
@@ -672,7 +682,6 @@ public class WebSecurityActorControllerTests {
     @Test
     public void ensureThatUserIsNotAbleToUpdateMovie() {
         Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
-        Director director = new Director("Test", "test", "test");
         movie.setDirector(director);
 
         ResponseEntity<Movie> response = testRestTemplate.
@@ -693,7 +702,6 @@ public class WebSecurityActorControllerTests {
     @Test
     public void ensureThatAdminIsAbleToUpdateMovie() {
         Movie movie = new Movie("movieName", 110, "Action", LocalDate.now(), "English");
-        Director director = new Director("Test", "test", "test");
         movie.setDirector(director);
 
         ResponseEntity<Movie> response = testRestTemplate.

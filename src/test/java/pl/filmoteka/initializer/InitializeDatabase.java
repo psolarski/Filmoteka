@@ -4,11 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.filmoteka.model.*;
-import pl.filmoteka.repository.*;
+import pl.filmoteka.repository.ActorRepository;
+import pl.filmoteka.repository.DirectorRepository;
+import pl.filmoteka.repository.MovieRepository;
+import pl.filmoteka.repository.RoleRepository;
 import pl.filmoteka.service.UserService;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class responsible for initialize database before all tests.
@@ -71,6 +76,13 @@ public class InitializeDatabase {
             userService.createUser(user);
         }
 
+        // Directors
+        List<Director> directorList = new ArrayList<>();
+        for (int i = 0; i < directorsSize; i++) {
+            Director director = new Director("name" + i, "surname" + i, "American");
+            directorList.add(directorRepository.saveAndFlush(director));
+        }
+
         // Movies
         for (int i = 0; i < moviesSize; i++) {
             Movie movie = new Movie(
@@ -79,14 +91,8 @@ public class InitializeDatabase {
                     "genre" + i,
                     LocalDate.now().minusWeeks(i * 2),
                     "English");
-            movie.setDirector(new Director("name" + i, "surname" + i, "American"));
+            movie.setDirector(directorList.get(i));
             movieRepository.saveAndFlush(movie);
-        }
-
-        // Directors
-        for (int i = 0; i < directorsSize; i++) {
-            Director director = new Director("name" + i, "surname" + i, "American");
-            directorRepository.saveAndFlush(director);
         }
     }
 }

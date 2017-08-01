@@ -97,7 +97,7 @@ public class ActorControllerFullIntegrationTest {
     }
 
     @Test
-    public void deleteDirector() {
+    public void deleteActor() {
         // First, create an actor
         Actor actor = new Actor("deleteActorTest", "someSurname", "American");
 

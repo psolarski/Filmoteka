@@ -13,6 +13,7 @@ import pl.filmoteka.controller.MoviesController;
 import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.User;
+import pl.filmoteka.repository.DirectorRepository;
 import pl.filmoteka.repository.MovieRepository;
 import pl.filmoteka.repository.UserRepository;
 import javax.mail.Message;
@@ -37,29 +38,47 @@ public class MovieControllerFullIntegrationWithEmailSending {
     @Autowired
     private MovieRepository movieRepository;
 
+    @Autowired
+    private DirectorRepository directorRepository;
+
+    private Director director;
+
     private GreenMail greenMail;
 
     @Before
     public void testSmtpInit(){
         greenMail = new GreenMail(ServerSetupTest.SMTP);
         greenMail.start();
+
+        if (director == null) {
+            director = new Director("MailTestDirector", "surname", "African");
+            director = directorRepository.saveAndFlush(director);
+        }
     }
 
     @Test
     public void ensureThatUserWillReceiveEmailAfterMovieCreationWithMatchingGenre() throws MessagingException {
-        Movie movie = new Movie(
+        Movie firstMovie = new Movie(
                 "EpicTestNewMovie",
                 100,
                 "horror",
                 LocalDate.now().minusWeeks(2),
                 "English");
-        movie.setDirector(new Director("name", "surname", "American"));
+        Movie otherMovie = new Movie(
+                "Some other movie 2",
+                100,
+                "horror",
+                LocalDate.now().minusWeeks(20),
+                "English");
+        firstMovie.setDirector(director);
+        otherMovie.setDirector(director);
+        moviesController.createMovie(firstMovie);
 
         User user = new User("MailTest", "password", "tmp@jmail.ovh");
-        user.setMovies(Stream.of(movie).collect(Collectors.toSet()));
+        user.setMovies(Stream.of(firstMovie).collect(Collectors.toSet()));
         userRepository.saveAndFlush(user);
 
-        moviesController.createMovie(movie);
+        moviesController.createMovie(otherMovie);
 
         Message[] messages = greenMail.getReceivedMessages();
         assertEquals(1, messages.length);
@@ -67,7 +86,7 @@ public class MovieControllerFullIntegrationWithEmailSending {
 
         /* cleaning */
         userRepository.delete(user);
-        movieRepository.delete(movie);
+        movieRepository.delete(firstMovie);
     }
 
     @After

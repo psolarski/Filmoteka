@@ -9,6 +9,7 @@ import pl.filmoteka.exception.InvalidApplicationConfigurationException;
 import pl.filmoteka.exception.InvalidExternalApiResponseException;
 import pl.filmoteka.exception.InvalidResourceRequestedException;
 import pl.filmoteka.model.Movie;
+import pl.filmoteka.model.User;
 import pl.filmoteka.model.integration.MusicAlbum;
 import pl.filmoteka.model.integration.NytCriticReview;
 import pl.filmoteka.model.integration.ProductList;
@@ -18,6 +19,7 @@ import pl.filmoteka.service.MusicAlbumService;
 import pl.filmoteka.service.ProductService;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by Piotr on 15.04.2017.
@@ -25,6 +27,9 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/movies/")
 public class MoviesController {
+
+    // Logger
+    final static Logger logger = Logger.getLogger(MoviesController.class.getName());
 
     @Autowired
     private MovieService movieService;
@@ -141,6 +146,55 @@ public class MoviesController {
 
         } catch (InvalidApplicationConfigurationException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Add chosen movie to user's watched movies list.
+     *
+     * @param id Chosen movie's ID
+     * @return Response with updated user information
+     */
+    @RequestMapping(value = "{movie_id}/watched", method = RequestMethod.GET)
+    public ResponseEntity<User> addMovieToWatched(@PathVariable("movie_id") Long id) {
+        String loggedUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        try {
+            return new ResponseEntity<>(movieService.addMovieToWatched(loggedUsername, id), HttpStatus.OK);
+
+        } catch (InvalidApplicationConfigurationException e) {
+            logger.severe("Invalid logged in user");
+
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        } catch (InvalidResourceRequestedException e) {
+            logger.severe("There's no user with requested ID");
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "{movie_id}/assign/actor/{actor_id}", method = RequestMethod.GET)
+    public ResponseEntity<Movie> assignActorToMovie(@PathVariable("movie_id") Long movieId, @PathVariable("actor_id") Long actorId) {
+        try {
+            return new ResponseEntity<>(movieService.assignActorToMovie(movieId, actorId), HttpStatus.OK);
+
+        } catch (InvalidResourceRequestedException e) {
+            logger.severe("There's no movie or actor with requested ID");
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "{movie_id}/assign/director/{director_id}", method = RequestMethod.GET)
+    public ResponseEntity<Movie> assignDirectorToMovie(@PathVariable("movie_id") Long movieId, @PathVariable("director_id") Long directorId) {
+        try {
+            return new ResponseEntity<>(movieService.assignDirectorToMovie(movieId, directorId), HttpStatus.OK);
+
+        } catch (InvalidResourceRequestedException e) {
+            logger.severe("There's no movie or director with requested ID");
+
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }
