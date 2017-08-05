@@ -20,7 +20,6 @@ public abstract class AuthorizedTestsBase {
 
     @PostConstruct
     public void initAuthoriedTemplates() {
-        System.out.println("CALLED");
         testRestTemplateAsUser = testRestTemplate.withBasicAuth(normalUserUsername, normalUserPassword);
         testRestTemplateAsAdmin = testRestTemplate.withBasicAuth(adminUserUsername, adminUserPassword);
     }
