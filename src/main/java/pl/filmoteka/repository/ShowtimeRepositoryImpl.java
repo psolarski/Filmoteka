@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 public class ShowtimeRepositoryImpl implements ShowtimeRepository {
 
     // Logger
-    final static Logger logger = Logger.getLogger(CinemaRepositoryImpl.class.getName());
+    final static Logger logger = Logger.getLogger(ShowtimeRepositoryImpl.class.getName());
 
     @Autowired
     private RestTemplate restTemplate;
