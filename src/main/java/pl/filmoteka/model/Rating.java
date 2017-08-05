@@ -38,6 +38,10 @@ public class Rating {
     public Rating() {
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public int getEvaluation() {
         return evaluation;
     }

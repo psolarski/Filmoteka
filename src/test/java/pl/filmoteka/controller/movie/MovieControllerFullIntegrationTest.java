@@ -1,22 +1,22 @@
 package pl.filmoteka.controller.movie;
 
-import com.jayway.restassured.path.json.JsonPath;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
+import pl.filmoteka.AuthorizedTestsBase;
 import pl.filmoteka.model.Director;
 import pl.filmoteka.model.Movie;
 import pl.filmoteka.model.Rating;
 import pl.filmoteka.repository.DirectorRepository;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,13 +28,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MovieControllerFullIntegrationTest {
+public class MovieControllerFullIntegrationTest extends AuthorizedTestsBase {
 
     @Value("${test.db.initializer.movies.size}")
     private Integer moviesSize;
-
-    @Autowired
-    private TestRestTemplate testRestTemplate;
 
     @Autowired
     private DirectorRepository directorRepository;
@@ -58,40 +55,29 @@ public class MovieControllerFullIntegrationTest {
 
     @Test
     public void getAllMovies() {
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
-                .getForEntity("/api/v1/movies/all", String.class);
+        ResponseEntity<Movie[]> response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/movies/all", Movie[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath path = new JsonPath(response.getBody());
-
-        assertThat((List<?>) path.get("name")).isNotNull().isNotEmpty().hasSize(moviesSize);
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
     }
 
     @Test
     public void getMoviesByName() {
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
-                .getForEntity("/api/v1/movies/name?name=name2", String.class);
+        ResponseEntity<Movie[]> response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/movies/name?name=name2", Movie[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath path = new JsonPath(response.getBody());
-
-        assertThat((List<?>) path.get("name")).isNotNull().isNotEmpty()
-                .hasSize(1);
+        assertThat(response.getBody()).isNotNull().isNotEmpty().hasSize(1);
     }
 
     @Test
     public void getMoviesByGenre() {
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
-                .getForEntity("/api/v1/movies/genre?genre=genre1", String.class);
+        ResponseEntity<Movie[]> response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/movies/genre?genre=genre1", Movie[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath path = new JsonPath(response.getBody());
-
-        assertThat((List<?>) path.get("name")).isNotNull().isNotEmpty()
-                .hasSize(1);
+        assertThat(response.getBody()).isNotNull().isNotEmpty().hasSize(1);
     }
 
     @Test
@@ -105,7 +91,7 @@ public class MovieControllerFullIntegrationTest {
         );
         movie.setDirector(director);
 
-        ResponseEntity<Movie> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
+        ResponseEntity<Movie> responseOnCreated = testRestTemplateAsAdmin
                 .postForEntity("/api/v1/movies/create", movie, Movie.class);
         assertThat(responseOnCreated.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(movie.equals(responseOnCreated.getBody()));
@@ -123,23 +109,20 @@ public class MovieControllerFullIntegrationTest {
         );
         movie.setDirector(director);
 
-        ResponseEntity<Movie> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
+        ResponseEntity<Movie> responseOnCreated = testRestTemplateAsAdmin
                 .postForEntity("/api/v1/movies/create", movie, Movie.class);
         assertThat(responseOnCreated.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // Then delete it
-        testRestTemplate.withBasicAuth("admin", "password")
+        testRestTemplateAsAdmin
                 .delete("/api/v1/movies/delete?id=" + responseOnCreated.getBody().getId());
 
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
-                .getForEntity("/api/v1/movies/all", String.class);
+        ResponseEntity<Movie[]> response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/movies/all", Movie[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath path = new JsonPath(response.getBody());
-
-        List <String> returnedNames = path.get("name");
-        assertThat(returnedNames).isNotNull().isNotEmpty().doesNotContain("deleteMovieTest");
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
+        Arrays.stream(response.getBody()).forEach(m -> assertThat(m.getName()).isNotEqualTo("deleteMovieTest"));
     }
 
     @Test
@@ -154,40 +137,35 @@ public class MovieControllerFullIntegrationTest {
         );
         movie.setDirector(director);
 
-        ResponseEntity<Movie> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
+        ResponseEntity<Movie> responseOnCreated = testRestTemplateAsAdmin
                 .postForEntity("/api/v1/movies/create", movie, Movie.class);
         assertThat(responseOnCreated.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // Check whether the application properly stored the movie
-        ResponseEntity<String> response = testRestTemplate.withBasicAuth("admin", "password")
-                .getForEntity("/api/v1/movies/all", String.class);
+        ResponseEntity<Movie[]> response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/movies/all", Movie[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath path = new JsonPath(response.getBody());
-
-        List <String> returnedNames = path.get("name");
-        assertThat(returnedNames).isNotNull().isNotEmpty().contains("updateMovieTest");
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
+        assertThat(Arrays.stream(response.getBody()).anyMatch(m -> m.getName().equals("updateMovieTest"))).isTrue();
 
         // Update the movie
         movie = responseOnCreated.getBody();
         movie.setName("updateMovieTestNewName");
 
         HttpEntity<Movie> httpEntity = new HttpEntity<>(movie, new HttpHeaders());
-        ResponseEntity<Movie> responseOnUpdated = testRestTemplate.withBasicAuth("admin", "password")
+        ResponseEntity<Movie> responseOnUpdated = testRestTemplateAsAdmin
                 .exchange("/api/v1/movies/update/" + movie.getId(), HttpMethod.PUT, httpEntity, Movie.class);
         assertThat(responseOnUpdated.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // Get list of all movies to be sure
-        ResponseEntity<String> responseAfterUpdate = testRestTemplate.withBasicAuth("admin", "password")
-                .getForEntity("/api/v1/movies/all", String.class);
+        ResponseEntity<Movie[]> responseAfterUpdate = testRestTemplate
+                .getForEntity("/api/v1/movies/all", Movie[].class);
 
         assertThat(responseAfterUpdate.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath pathAfterUpdate = new JsonPath(responseAfterUpdate.getBody());
-
-        List <String> returnedNamesAfterUpdate = pathAfterUpdate.get("name");
-        assertThat(returnedNamesAfterUpdate).isNotNull().isNotEmpty().contains("updateMovieTestNewName");
+        assertThat(responseAfterUpdate.getBody()).isNotNull().isNotEmpty();
+        assertThat(Arrays.stream(responseAfterUpdate.getBody())
+                .anyMatch(m -> m.getName().equals("updateMovieTestNewName"))).isTrue();
     }
 
     @Test
@@ -206,13 +184,13 @@ public class MovieControllerFullIntegrationTest {
             ratings.add(new Rating(movie, i + 1));
             movie.setRatings(ratings);
 
-            ResponseEntity<Movie> responseOnCreated = testRestTemplate.withBasicAuth("admin", "password")
+            ResponseEntity<Movie> responseOnCreated = testRestTemplateAsAdmin
                     .postForEntity("/api/v1/movies/create", movie, Movie.class);
             assertThat(responseOnCreated.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(movie.equals(responseOnCreated.getBody()));
         }
 
-        ResponseEntity<List<Movie>> responseEntity = testRestTemplate.withBasicAuth("admin", "password").exchange(
+        ResponseEntity<List<Movie>> responseEntity = testRestTemplateAsAdmin.exchange(
                 "/api/v1/movies/rating/" + filmLimit,
                 HttpMethod.GET,
                 null,

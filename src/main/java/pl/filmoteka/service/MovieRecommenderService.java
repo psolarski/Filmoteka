@@ -85,7 +85,9 @@ public class MovieRecommenderService {
         );
 
         recommendedMovies.sort(new MovieReleaseDateComparator());
-        recommendedMovies = recommendedMovies.subList(0, movieRecommendationsLimit);
+        int moviesLimit = recommendedMovies.size() > movieRecommendationsLimit
+                ? movieRecommendationsLimit : recommendedMovies.size();
+        recommendedMovies = recommendedMovies.subList(0, moviesLimit);
     }
 
     private void removeAlreadyWatchedMoviesFromRecommendations() {

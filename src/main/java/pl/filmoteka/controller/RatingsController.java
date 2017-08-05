@@ -14,7 +14,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api/v1/ratings/")
-public class RatingController {
+public class RatingsController {
 
     @Autowired
     private RatingService ratingService;
@@ -43,7 +43,7 @@ public class RatingController {
             return new ResponseEntity<>(ratingService.updateRating(id, rating),
                                         HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -38,7 +38,7 @@ public class UsersController {
     }
 
     @RequestMapping(value = "username", method = RequestMethod.GET)
-    public User findByLogin(@RequestParam(value = "username") String username) {
+    public User findByUsername(@RequestParam(value = "username") String username) {
         return userService.findByUsername(username);
     }
 
@@ -68,7 +68,6 @@ public class UsersController {
 
         // Explicitly set passed values
         storedUser.setEmail(modifiedUser.getEmail());
-        storedUser.setMovies(modifiedUser.getMovies());
 
         User updatedEntity = userService.updateUser(storedUser);
 

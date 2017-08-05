@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.filmoteka.model.*;
-import pl.filmoteka.repository.ActorRepository;
-import pl.filmoteka.repository.DirectorRepository;
-import pl.filmoteka.repository.MovieRepository;
-import pl.filmoteka.repository.RoleRepository;
+import pl.filmoteka.repository.*;
 import pl.filmoteka.service.UserService;
 
 import javax.annotation.PostConstruct;
@@ -33,6 +30,9 @@ public class InitializeDatabase {
     @Value("${test.db.initializer.directors.size}")
     private Integer directorsSize;
 
+    @Value("${test.db.initializer.ratings.size}")
+    private Integer ratingsSize;
+
     @Autowired
     private ActorRepository actorRepository;
 
@@ -47,6 +47,9 @@ public class InitializeDatabase {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @PostConstruct
     public void initialize() {
@@ -66,7 +69,6 @@ public class InitializeDatabase {
         User adminUser = new User("admin", "password", "admin@user.20ak3e");
         User normalUser = new User("user", "password", "user@user.20ak3e");
         adminUser.assignRole(adminRole);
-        adminUser.assignRole(userRole);
         normalUser.assignRole(userRole);
         userService.createUser(adminUser);
         userService.createUser(normalUser);
@@ -93,6 +95,21 @@ public class InitializeDatabase {
                     "English");
             movie.setDirector(directorList.get(i));
             movieRepository.saveAndFlush(movie);
+        }
+
+        // Ratings
+        Movie movieForRatings = new Movie(
+                "movieForRatings",
+                50,
+                "genre",
+                LocalDate.now(),
+                "English");
+        movieForRatings.setDirector(directorList.get(0));
+        movieRepository.saveAndFlush(movieForRatings);
+
+        for (int i = 0; i < ratingsSize; i++) {
+            Rating rating = new Rating(movieForRatings, 5);
+            ratingRepository.saveAndFlush(rating);
         }
     }
 }
