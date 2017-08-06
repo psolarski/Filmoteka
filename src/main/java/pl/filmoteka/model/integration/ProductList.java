@@ -28,4 +28,11 @@ public class ProductList {
     public void setResultsUrl(String resultsUrl) {
         this.resultsUrl = resultsUrl;
     }
+
+    public ProductList() {
+    }
+
+    public ProductList(List<Product> products) {
+        this.products = products;
+    }
 }

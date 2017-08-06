@@ -1,0 +1,113 @@
+{
+  "albums" : {
+    "href" : "https://api.spotify.com/v1/search?query=Dunkirk&type=album&market=PL&offset=0&limit=3",
+    "items" : [ {
+      "album_type" : "album",
+      "artists" : [ {
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/artist/0YC192cP3KPCRWx8zr8MfZ"
+        },
+        "href" : "https://api.spotify.com/v1/artists/0YC192cP3KPCRWx8zr8MfZ",
+        "id" : "0YC192cP3KPCRWx8zr8MfZ",
+        "name" : "Hans Zimmer",
+        "type" : "artist",
+        "uri" : "spotify:artist:0YC192cP3KPCRWx8zr8MfZ"
+      } ],
+      "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TR", "TW", "US", "UY" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/56hnQxU8h3Upf1nqR0fXYi"
+      },
+      "href" : "https://api.spotify.com/v1/albums/56hnQxU8h3Upf1nqR0fXYi",
+      "id" : "56hnQxU8h3Upf1nqR0fXYi",
+      "images" : [ {
+        "height" : 640,
+        "url" : "https://i.scdn.co/image/ac9075f92ebd34a1fe99bd816dbedabe9a4e1ea4",
+        "width" : 640
+      }, {
+        "height" : 300,
+        "url" : "https://i.scdn.co/image/84ab66efdce220c8b6109c26d593c68b31cc21ca",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/579ab6ecf18a9d60e64679ebb47bc92e4f4f1a2c",
+        "width" : 64
+      } ],
+      "name" : "Dunkirk: Original Motion Picture Soundtrack",
+      "type" : "album",
+      "uri" : "spotify:album:56hnQxU8h3Upf1nqR0fXYi"
+    }, {
+      "album_type" : "single",
+      "artists" : [ {
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/artist/0YC192cP3KPCRWx8zr8MfZ"
+        },
+        "href" : "https://api.spotify.com/v1/artists/0YC192cP3KPCRWx8zr8MfZ",
+        "id" : "0YC192cP3KPCRWx8zr8MfZ",
+        "name" : "Hans Zimmer",
+        "type" : "artist",
+        "uri" : "spotify:artist:0YC192cP3KPCRWx8zr8MfZ"
+      } ],
+      "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TR", "TW", "US", "UY" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/12z8kwyjmauatGkQPDLbVi"
+      },
+      "href" : "https://api.spotify.com/v1/albums/12z8kwyjmauatGkQPDLbVi",
+      "id" : "12z8kwyjmauatGkQPDLbVi",
+      "images" : [ {
+        "height" : 640,
+        "url" : "https://i.scdn.co/image/c834d85309a4466ae52384e3d7bc1359dada4a95",
+        "width" : 640
+      }, {
+        "height" : 300,
+        "url" : "https://i.scdn.co/image/8ecf7b58faaa6c22905c20a2b5c50bfb0bf74839",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/af69c6793a27a516dca5d5eabf01ab31f0d2c0eb",
+        "width" : 64
+      } ],
+      "name" : "Supermarine (From Dunkirk: Original Motion Picture Soundtrack)",
+      "type" : "album",
+      "uri" : "spotify:album:12z8kwyjmauatGkQPDLbVi"
+    }, {
+      "album_type" : "album",
+      "artists" : [ {
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/artist/2KfQeYeRz9CYWKcsompyqi"
+        },
+        "href" : "https://api.spotify.com/v1/artists/2KfQeYeRz9CYWKcsompyqi",
+        "id" : "2KfQeYeRz9CYWKcsompyqi",
+        "name" : "Dnb Drumstep",
+        "type" : "artist",
+        "uri" : "spotify:artist:2KfQeYeRz9CYWKcsompyqi"
+      } ],
+      "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "ID", "IE", "IS", "IT", "JP", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "SE", "SG", "SK", "SV", "TR", "TW", "US", "UY" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/3pjp0tdJleYgi1O9u9bL1b"
+      },
+      "href" : "https://api.spotify.com/v1/albums/3pjp0tdJleYgi1O9u9bL1b",
+      "id" : "3pjp0tdJleYgi1O9u9bL1b",
+      "images" : [ {
+        "height" : 640,
+        "url" : "https://i.scdn.co/image/d581974ddf8f9a647c131a467845932a125d088d",
+        "width" : 640
+      }, {
+        "height" : 300,
+        "url" : "https://i.scdn.co/image/bd43c3742f2011f3eb2fb814d3d3aa2d09e5cc0e",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/4f4f55df11be2a9dae69cff26e25759483c4e253",
+        "width" : 64
+      } ],
+      "name" : "Dunkirk",
+      "type" : "album",
+      "uri" : "spotify:album:3pjp0tdJleYgi1O9u9bL1b"
+    } ],
+    "limit" : 3,
+    "next" : "https://api.spotify.com/v1/search?query=Dunkirk&type=album&market=PL&offset=3&limit=3",
+    "offset" : 0,
+    "previous" : null,
+    "total" : 11
+  }
+}

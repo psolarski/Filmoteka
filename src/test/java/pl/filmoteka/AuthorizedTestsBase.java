@@ -19,7 +19,7 @@ public abstract class AuthorizedTestsBase {
     protected String adminUserPassword = "password";
 
     @PostConstruct
-    public void initAuthoriedTemplates() {
+    public void initAuthorizedTemplates() {
         testRestTemplateAsUser = testRestTemplate.withBasicAuth(normalUserUsername, normalUserPassword);
         testRestTemplateAsAdmin = testRestTemplate.withBasicAuth(adminUserUsername, adminUserPassword);
     }

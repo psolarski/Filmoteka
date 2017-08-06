@@ -40,6 +40,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Autowired
     private EbaySearchResponseMapper mapper;
 
+    private String characterEncoding = "UTF-8";
+
     /**
      * Find products on Ebay by keywords.
      *
@@ -56,7 +58,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         try {
             filledUrl = filledUrl
                     .replace("{security_appname}", ebaySecurityAppname)
-                    .replace("{keywords}", URLEncoder.encode(keywords, "UTF-8"))
+                    .replace("{keywords}", URLEncoder.encode(keywords, characterEncoding))
                     .replace("{perpage}", ebayPerPage);
 
             URIBuilder uri = new URIBuilder(filledUrl);
