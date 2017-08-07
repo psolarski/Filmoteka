@@ -9,14 +9,14 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.AuthorizedTestsBase;
 import pl.filmoteka.model.Actor;
+import pl.filmoteka.model.Director;
+import pl.filmoteka.model.Movie;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Created by Piotr on 13.04.2017.
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ActorControllerFullIntegrationTest extends AuthorizedTestsBase {
@@ -155,5 +155,21 @@ public class ActorControllerFullIntegrationTest extends AuthorizedTestsBase {
 
         List <String> returnedNamesAfterUpdate = pathAfterUpdate.get("name");
         assertThat(returnedNamesAfterUpdate).isNotNull().isNotEmpty().contains("updateActorTestNewName");
+    }
+
+    @Test
+    public void actorPlayedInMovieIfMovieWasAssignedToActor() {
+        Actor actor = new Actor("assignMovieTest", "surname", "nationality");
+        actor = testRestTemplateAsAdmin.postForEntity("/api/v1/actors/create", actor, Actor.class).getBody();
+        Director director = new Director("assignMovieTest", "surname", "nationality");
+        director = testRestTemplateAsAdmin.postForEntity("/api/v1/directors/create", director, Director.class)
+                .getBody();
+        Movie movie = new Movie("assignMovieTest", 50, "genre", LocalDate.now(), "lang");
+        movie.assignDirector(director);
+        movie = testRestTemplateAsAdmin.postForEntity("/api/v1/movies/create", movie, Movie.class).getBody();
+        actor = testRestTemplateAsAdmin.postForEntity("/api/v1/actors/movie?id=" + actor.getId(), movie, Actor.class)
+                .getBody();
+
+        assertThat(actor.getMovies()).isNotNull().hasSize(1);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.AuthorizedTestsBase;
 import pl.filmoteka.model.Role;
+import pl.filmoteka.model.SimilarityDegree;
 import pl.filmoteka.model.User;
 
 import java.util.List;
@@ -148,5 +149,15 @@ public class UserControllerFullIntegrationTest extends AuthorizedTestsBase {
 
         assertThat(responseOnModified.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(user.getRoles().stream().anyMatch(r -> r.getName().equals("USER"))).isTrue();
+    }
+
+    @Test
+    public void prepareSimilarityDegreeRapportGivenProperUsers() {
+        Integer otherUserId = 1;
+        ResponseEntity<SimilarityDegree> response = testRestTemplateAsUser
+                .getForEntity("/api/v1/users/similarity/" + otherUserId, SimilarityDegree.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getMoviesInCommon()).isNotNull().isEmpty();
     }
 }

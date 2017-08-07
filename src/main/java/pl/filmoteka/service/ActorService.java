@@ -39,10 +39,10 @@ public class ActorService {
     }
 
     @Transactional
-    public void addMovie(Long id, Movie movie) {
+    public Actor addMovie(Long id, Movie movie) {
         Actor actor = actorRepository.findOne(id);
         actor.getMovies().add(movie);
-        actorRepository.saveAndFlush(actor);
+        return actorRepository.saveAndFlush(actor);
     }
 
     @Transactional
