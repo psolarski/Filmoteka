@@ -10,10 +10,13 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.AuthorizedTestsBase;
-import pl.filmoteka.model.Director;
-import pl.filmoteka.model.Movie;
-import pl.filmoteka.model.Rating;
+import pl.filmoteka.model.*;
+import pl.filmoteka.model.integration.MusicAlbum;
+import pl.filmoteka.model.integration.NytCriticReview;
+import pl.filmoteka.model.integration.ProductList;
+import pl.filmoteka.repository.ActorRepository;
 import pl.filmoteka.repository.DirectorRepository;
+import pl.filmoteka.repository.MovieRepository;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -36,10 +39,17 @@ public class MovieControllerFullIntegrationTest extends AuthorizedTestsBase {
     @Autowired
     private DirectorRepository directorRepository;
 
+    @Autowired
+    private MovieRepository movieRepository;
+
+    @Autowired
+    private ActorRepository actorRepository;
+
     @Value("${best.rated.movie.limit}")
     private int filmLimit;
 
     private Director director;
+    private Movie actuallyExistingMovie;
 
     @Before
     public void init() {
@@ -50,6 +60,18 @@ public class MovieControllerFullIntegrationTest extends AuthorizedTestsBase {
                     "someNationality"
             );
             director = directorRepository.saveAndFlush(director);
+        }
+
+        if (actuallyExistingMovie == null) {
+            actuallyExistingMovie = new Movie(
+                    "Dunkirk",
+                    50,
+                    "someGenre",
+                    LocalDate.now(),
+                    "Polish"
+            );
+            actuallyExistingMovie.setDirector(director);
+            actuallyExistingMovie = movieRepository.saveAndFlush(actuallyExistingMovie);
         }
     }
 
@@ -169,6 +191,33 @@ public class MovieControllerFullIntegrationTest extends AuthorizedTestsBase {
     }
 
     @Test
+    public void listCriticsReviewsForGivenMovie() {
+        ResponseEntity<NytCriticReview[]> response = testRestTemplate
+                .getForEntity("/api/v1/movies/" + actuallyExistingMovie.getId() + "/reviews", NytCriticReview[].class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
+    }
+
+    @Test
+    public void listProductsOnEbayForGivenMovie() {
+        ResponseEntity<ProductList> response = testRestTemplate
+                .getForEntity("/api/v1/movies/" + actuallyExistingMovie.getId() + "/products", ProductList.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getProducts()).isNotNull().isNotEmpty();
+    }
+
+    @Test
+    public void listSoundtrackAlbumsFromSpotifyForGivenMovie() {
+        ResponseEntity<MusicAlbum[]> response = testRestTemplate
+                .getForEntity("/api/v1/movies/" + actuallyExistingMovie.getId() + "/soundtrack", MusicAlbum[].class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
+    }
+
+    @Test
     public void receiveNBestRatedMovies() {
         for (int i = 1; i <= 9; i++) {
             Movie movie = new Movie(
@@ -201,5 +250,90 @@ public class MovieControllerFullIntegrationTest extends AuthorizedTestsBase {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         assertThat(responseEntity.getBody()).isNotNull().isNotEmpty().hasSize(filmLimit);
+    }
+
+    @Test
+    public void recommendComedyMovieBasedOnWatchedMovies(){
+        Movie firstComedyMovie = new Movie(
+                "recommendComedy1",
+                109,
+                "Comedy",
+                LocalDate.now(),
+                "English");
+        Movie secondComedyMovie = new Movie(
+                "recommendComedy2",
+                109,
+                "Comedy",
+                LocalDate.now(),
+                "English");
+        Movie actionMovie = new Movie(
+                "recommendAction1",
+                109,
+                "Action",
+                LocalDate.now(),
+                "English");
+        firstComedyMovie.setDirector(director);
+        secondComedyMovie.setDirector(director);
+        actionMovie.setDirector(director);
+        firstComedyMovie = movieRepository.saveAndFlush(firstComedyMovie);
+        movieRepository.saveAndFlush(secondComedyMovie);
+        movieRepository.saveAndFlush(actionMovie);
+
+        testRestTemplateAsUser.getForEntity("/api/v1/movies/" + firstComedyMovie.getId() + "/watched", User.class);
+
+        ResponseEntity<Movie[]> response = testRestTemplateAsUser
+                .getForEntity("/api/v1/movies/recommendations", Movie[].class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
+        assertThat(Arrays.stream(response.getBody()).anyMatch(m -> m.getName().equals("recommendComedy2"))).isTrue();
+    }
+
+    @Test
+    public void successfullyMarkMovieAsWatched() {
+        Movie movie = new Movie(
+                "watchedMovieTest",
+                109,
+                "Comedy",
+                LocalDate.now(),
+                "English");
+        movie.setDirector(director);
+        movie = movieRepository.saveAndFlush(movie);
+
+        ResponseEntity<User> response = testRestTemplateAsUser
+                .getForEntity("/api/v1/movies/" + movie.getId() + "/watched", User.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getMovies()).isNotNull().isNotEmpty();
+        assertThat(response.getBody().getMovies().stream().anyMatch(m -> m.getName().equals("watchedMovieTest"))).isTrue();
+    }
+
+    @Test
+    public void actorIsAssignedToChosenMovie() {
+        Actor actor = new Actor("assignActorTest", "surname", "nationality");
+        actor = actorRepository.saveAndFlush(actor);
+
+        ResponseEntity<Movie> response = testRestTemplateAsAdmin.getForEntity(
+                "/api/v1/movies/" + actuallyExistingMovie.getId() + "/assign/actor/" + actor.getId(),
+                Movie.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getActors().stream().anyMatch(a -> a.getName().equals("assignActorTest")))
+                .isTrue();
+    }
+
+    @Test
+    public void directorIsAssignedToChosenMovie() {
+        Director director = new Director("assignDirectorTest", "surname", "nationality");
+        director = directorRepository.saveAndFlush(director);
+
+        ResponseEntity<Movie> response = testRestTemplateAsAdmin.getForEntity(
+                "/api/v1/movies/" + actuallyExistingMovie.getId() + "/assign/director/" + director.getId(),
+                Movie.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getDirector().getName()).isEqualTo("assignDirectorTest");
     }
 }
