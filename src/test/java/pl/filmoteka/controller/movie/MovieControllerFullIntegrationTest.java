@@ -336,4 +336,13 @@ public class MovieControllerFullIntegrationTest extends AuthorizedTestsBase {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getDirector().getName()).isEqualTo("assignDirectorTest");
     }
+
+    @Test
+    public void receiveMovieFromTheMovieDB() {
+        ResponseEntity response = testRestTemplateAsAdmin.getForEntity(
+                "/api/v1/movies/movieFromMovieDb/uuu", Object.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
 }

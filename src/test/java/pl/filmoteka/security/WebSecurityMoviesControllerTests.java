@@ -446,4 +446,12 @@ public class WebSecurityMoviesControllerTests extends AuthorizedTestsBase {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
+
+    @Test
+    public void ensureThatAdminIsAbleToReceiveMovesFromTheMovieDB() {
+        ResponseEntity response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/movies/movieFromMovieDb/Inception", Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
 }
