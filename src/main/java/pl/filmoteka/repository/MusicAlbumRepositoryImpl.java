@@ -56,6 +56,11 @@ public class MusicAlbumRepositoryImpl implements MusicAlbumRepository {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private SpotifySearchAlbumMapper mapper;
+
+    private String characterEncoding = "UTF-8";
+
     /**
      * Find a music album on Spotify for given movie by its name.
      *
@@ -66,32 +71,28 @@ public class MusicAlbumRepositoryImpl implements MusicAlbumRepository {
      */
     @Override
     public List<MusicAlbum> findMusicAlbumByMovieName(String movieName) throws InvalidExternalApiResponseException, InvalidApplicationConfigurationException {
-        // First - obtain token from API
         if (TOKEN_EXPIRES_ON.isBefore(LocalDateTime.now()) || TOKEN.isEmpty()) {
             obtainApiToken();
         }
 
-        // Now we can proceed to actually get albums from Spotify
         String headerAuth = "Bearer " + TOKEN;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", headerAuth);
 
         try {
-            // Let's build the URI!
             URIBuilder url = new URIBuilder(apiUrlSearch);
-            url.addParameter("q", URLEncoder.encode(movieName, "UTF-8"));
+            url.addParameter("q", URLEncoder.encode(movieName, characterEncoding));
             url.addParameter("type", "album");
             url.addParameter("limit", apiAlbumsLimit.toString());
 
             ResponseEntity<String> responseAlbums =
                     restTemplate.exchange(url.build(), HttpMethod.GET, new HttpEntity<>(headers), String.class);
 
-            // If response is not OK then stop...
             if (responseAlbums.getStatusCode().value() != 200) {
                 throw new RuntimeException();
             }
 
-            return new SpotifySearchAlbumMapper().from(responseAlbums.getBody());
+            return mapper.from(responseAlbums.getBody());
 
         } catch (URISyntaxException e) {
             logger.severe("Invalid URI");
@@ -112,11 +113,8 @@ public class MusicAlbumRepositoryImpl implements MusicAlbumRepository {
      * @throws InvalidExternalApiResponseException Malformed response from external API
      */
     private void obtainApiToken() throws InvalidExternalApiResponseException {
-        // Prepare necessary content for POST request
         String decodedAuthString = apiClientId + ":" + apiSecretClient;
         String headerAuth = "Basic " + Base64.getEncoder().encodeToString(decodedAuthString.getBytes(StandardCharsets.UTF_8));
-
-        // Now prepare request headers
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", headerAuth);
 
@@ -130,15 +128,13 @@ public class MusicAlbumRepositoryImpl implements MusicAlbumRepository {
         ResponseEntity<SpotifyToken> responseToken =
                 restTemplate.exchange(apiUrlToken, HttpMethod.POST, httpEntity, SpotifyToken.class);
 
-        // If response is not OK then stop...
         if (responseToken.getStatusCode().value() != 200) {
             throw new InvalidExternalApiResponseException("Response from Spotify API was malformed!");
         }
 
-        // At last let's save received values
         TOKEN = responseToken.getBody().getAccessToken();
 
-        // Minus 60 seconds to be 100% sure that we won't try to make a request with 1 seconds of token left...
+        // Minus 60 seconds to be 100% sure that we won't try to make a request with 1 minute of token left...
         TOKEN_EXPIRES_ON = LocalDateTime.now().plusSeconds(responseToken.getBody().getExpiresIn() - 60);
     }
 }

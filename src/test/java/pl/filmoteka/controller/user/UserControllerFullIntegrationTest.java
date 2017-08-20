@@ -9,8 +9,10 @@ import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.filmoteka.AuthorizedTestsBase;
 import pl.filmoteka.model.Role;
+import pl.filmoteka.model.SimilarityDegree;
 import pl.filmoteka.model.User;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,16 +29,11 @@ public class UserControllerFullIntegrationTest extends AuthorizedTestsBase {
 
     @Test
     public void getAllUsers() {
-        ResponseEntity<String> response = testRestTemplateAsAdmin
-                .getForEntity("/api/v1/users/all", String.class);
+        ResponseEntity<User[]> response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/users/all", User[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath path = new JsonPath(response.getBody());
-
-        assertThat((List<?>) path.get("username")).isNotNull().isNotEmpty();
-        assertThat((List<?>) path.get("password")).isNotNull().isNotEmpty();
-        assertThat((List<?>) path.get("email")).isNotNull().isNotEmpty();
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
     }
 
     @Test
@@ -77,15 +74,12 @@ public class UserControllerFullIntegrationTest extends AuthorizedTestsBase {
     public void deleteUser() {
         testRestTemplateAsAdmin.delete("/api/v1/users/delete?id=3");
 
-        ResponseEntity<String> response = testRestTemplateAsAdmin
-                .getForEntity("/api/v1/users/all", String.class);
+        ResponseEntity<User[]> response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/users/all", User[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath path = new JsonPath(response.getBody());
-
-        List<String> returnedLogins = path.get("username");
-        assertThat(returnedLogins).isNotNull().isNotEmpty().doesNotContain("username0");
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
+        assertThat(Arrays.stream(response.getBody()).anyMatch(u -> u.getUsername().equals("username0"))).isFalse();
     }
 
     @Test
@@ -98,19 +92,16 @@ public class UserControllerFullIntegrationTest extends AuthorizedTestsBase {
         assertThat(responseOnCreated.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // Check whether the application properly stored the user
-        ResponseEntity<String> response = testRestTemplateAsAdmin
-                .getForEntity("/api/v1/users/all", String.class);
+        ResponseEntity<User[]> response = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/users/all", User[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        JsonPath path = new JsonPath(response.getBody());
-
-        List<String> returnedNames = path.get("username");
-        assertThat(returnedNames).isNotNull().isNotEmpty().contains("updateUserTest");
+        assertThat(response.getBody()).isNotNull().isNotEmpty();
+        assertThat(Arrays.stream(response.getBody()).anyMatch(u -> u.getUsername().equals("updateUserTest"))).isTrue();
 
         // Update user
         user = responseOnCreated.getBody();
-        user.setEmail("updateDirectorTestNewEmail@email.com");
+        user.setEmail("updateUserTestNewEmail@email.com");
 
         HttpEntity<User> httpEntity = new HttpEntity<>(user, new HttpHeaders());
         ResponseEntity<User> responseOnUpdated = testRestTemplateAsAdmin
@@ -118,15 +109,15 @@ public class UserControllerFullIntegrationTest extends AuthorizedTestsBase {
         assertThat(responseOnUpdated.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         // Get list of all directors to be sure
-        ResponseEntity<String> responseAfterUpdate = testRestTemplateAsAdmin
-                .getForEntity("/api/v1/users/all", String.class);
+        ResponseEntity<User[]> responseAfterUpdate = testRestTemplateAsAdmin
+                .getForEntity("/api/v1/users/all", User[].class);
 
         assertThat(responseAfterUpdate.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseAfterUpdate.getBody()).isNotNull().isNotEmpty();
+        assertThat(Arrays.stream(responseAfterUpdate.getBody())
+                .anyMatch(u -> u.getEmail().equals("updateUserTestNewEmail@email.com"))
+        ).isTrue();
 
-        JsonPath pathAfterUpdate = new JsonPath(responseAfterUpdate.getBody());
-
-        List<String> returnedEmailsAfterUpdate = pathAfterUpdate.get("email");
-        assertThat(returnedEmailsAfterUpdate).isNotNull().isNotEmpty().contains("updateDirectorTestNewEmail@email.com");
     }
 
     @Test
@@ -148,5 +139,15 @@ public class UserControllerFullIntegrationTest extends AuthorizedTestsBase {
 
         assertThat(responseOnModified.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(user.getRoles().stream().anyMatch(r -> r.getName().equals("USER"))).isTrue();
+    }
+
+    @Test
+    public void prepareSimilarityDegreeRapportGivenProperUsers() {
+        Integer otherUserId = 1;
+        ResponseEntity<SimilarityDegree> response = testRestTemplateAsUser
+                .getForEntity("/api/v1/users/similarity/" + otherUserId, SimilarityDegree.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getMoviesInCommon()).isNotNull().isEmpty();
     }
 }

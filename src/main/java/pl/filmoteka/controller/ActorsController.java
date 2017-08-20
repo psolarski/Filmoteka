@@ -56,8 +56,8 @@ public class ActorsController {
     }
 
     @RequestMapping(value = "movie", method = RequestMethod.POST)
-    public void addMovie(@RequestParam(value = "id") Long id, @RequestBody Movie movie) {
-        actorService.addMovie(id, movie);
+    public Actor addMovie(@RequestParam(value = "id") Long id, @RequestBody Movie movie) {
+        return actorService.addMovie(id, movie);
     }
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)

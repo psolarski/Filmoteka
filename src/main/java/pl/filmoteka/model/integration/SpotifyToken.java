@@ -25,4 +25,13 @@ public class SpotifyToken {
     public Integer getExpiresIn() {
         return expiresIn;
     }
+
+    public SpotifyToken() {
+    }
+
+    public SpotifyToken(String accessToken, String tokenType, Integer expiresIn) {
+        this.accessToken = accessToken;
+        this.tokenType = tokenType;
+        this.expiresIn = expiresIn;
+    }
 }

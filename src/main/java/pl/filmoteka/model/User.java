@@ -42,9 +42,6 @@ public class User implements UserDetails {
     @Email
     private String email;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private Set<Notification> notifications = new HashSet<>(0);
-
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
     @JoinTable(
         name = "users_roles",
