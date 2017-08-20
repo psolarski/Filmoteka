@@ -13,10 +13,7 @@ import pl.filmoteka.model.User;
 import pl.filmoteka.model.integration.MusicAlbum;
 import pl.filmoteka.model.integration.NytCriticReview;
 import pl.filmoteka.model.integration.ProductList;
-import pl.filmoteka.service.MovieRecommenderService;
-import pl.filmoteka.service.MovieService;
-import pl.filmoteka.service.MusicAlbumService;
-import pl.filmoteka.service.ProductService;
+import pl.filmoteka.service.*;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -42,6 +39,9 @@ public class MoviesController {
 
     @Autowired
     private MovieRecommenderService movieRecommenderService;
+
+    @Autowired
+    private TheMovieDbService theMovieDbService;
 
     @RequestMapping(value = "all", method = RequestMethod.GET)
     public List<Movie> findAll() {
@@ -196,5 +196,14 @@ public class MoviesController {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    /**
+     * Integration with themoviedb.org
+     */
+    @RequestMapping(value = "movieFromMovieDb/{movieTitle}", method = RequestMethod.GET)
+    public ResponseEntity receiveMoviesFromMovieDb(@PathVariable("movieTitle") String movieTitle) {
+
+            return new ResponseEntity<>(theMovieDbService.findMovieInformation(movieTitle), HttpStatus.OK);
     }
 }
