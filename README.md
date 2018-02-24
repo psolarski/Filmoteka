@@ -1,37 +1,4 @@
-## Welcome to GitHub Pages
+<a href='https://coveralls.io/github/psolarski/Filmoteka?branch=master'><img src='https://coveralls.io/repos/github/psolarski/Filmoteka/badge.svg?branch=master' alt='Coverage Status' /></a>
 
-You can use the [editor on GitHub](https://github.com/psolarski/Filmoteka/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/psolarski/Filmoteka/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Filmoteka is REST API application containts informations about actors, directors, movies and  movie's rankings.
+Application provides integration with Spotify, ThemMovieDB and Ebay.
